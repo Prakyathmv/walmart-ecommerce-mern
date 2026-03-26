@@ -1,0 +1,184 @@
+/* Walmart Enterprise Admin Portal Styling */
+
+.admin-portal-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f2f8fd;
+  /* Walmart light background */
+}
+
+/* Header */
+.admin-top-nav {
+  height: 64px;
+  background-color: #0071dc;
+  /* Signature blue */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.admin-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-brand-logo {
+  height: 36px;
+  border-radius: 4px;
+}
+
+.admin-brand-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  padding-left: 16px;
+}
+
+.admin-nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.admin-profile-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 20px;
+  transition: background-color 0.2s;
+}
+
+.admin-profile-menu:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-profile-menu i {
+  font-size: 24px;
+  color: #ffc220;
+  /* Walmart yellow accent */
+}
+
+/* Body Container */
+.admin-body-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.admin-sidebar-menu {
+  width: 260px;
+  background-color: #ffffff;
+  border-right: 1px solid #e3e4e6;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02);
+  z-index: 90;
+}
+
+.admin-sidebar-menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background-color: transparent;
+  color: #46474a;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar-btn i {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+  color: #74767c;
+  transition: color 0.2s ease;
+}
+
+.sidebar-btn:hover {
+  background-color: #f2f8fd;
+  color: #0071dc;
+}
+
+.sidebar-btn:hover i {
+  color: #0071dc;
+}
+
+.sidebar-btn.active {
+  background-color: #e6f1fc;
+  color: #0071dc;
+  font-weight: 700;
+}
+
+.sidebar-btn.active i {
+  color: #0071dc;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid #e3e4e6;
+  padding-top: 16px;
+}
+
+.sign-out-action {
+  color: #d1281b;
+}
+
+.sign-out-action i {
+  color: #d1281b;
+}
+
+.sign-out-action:hover {
+  background-color: #fdf2f2;
+  color: #b32015;
+}
+
+/* Main Viewport */
+.admin-main-viewport {
+  flex: 1;
+  background-color: #f2f8fd;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+/* Scrollbar styling for main viewport */
+.admin-main-viewport::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-main-viewport::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.admin-main-viewport::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.admin-main-viewport::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

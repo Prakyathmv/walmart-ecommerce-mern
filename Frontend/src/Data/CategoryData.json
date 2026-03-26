@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "Car seats",
+    "image": "https://images.unsplash.com/photo-1680964304327-4ce24f776807?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGNhciUyMHNlYXRzfGVufDB8fDB8fHww",
+    "link": "#"
+  },
+  {
+    "id": 2,
+    "title": "Strollers",
+    "image": "https://plus.unsplash.com/premium_photo-1681966072722-453d772ec316?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8c3Ryb2xsZXJzfGVufDB8fDB8fHww",
+    "link": "#"
+  },
+  {
+    "id": 3,
+    "title": "Care & safety",
+    "image": "https://images.unsplash.com/photo-1765896387387-0538bc9f997e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGNhcmUlMjBhbmQlMjBzdXBwb3J0fGVufDB8fDB8fHww",
+    "link": "#"
+  },
+  {
+    "id": 4,
+    "title": "Activity & gear",
+    "image": "https://images.unsplash.com/photo-1769911111765-d4fb50268209?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8YWN0aXZpdHklMjBhbmQlMjBnZWFyfGVufDB8fDB8fHww",
+    "link": "#"
+  },
+  {
+    "id": 5,
+    "title": "Nursery",
+    "image": "https://images.unsplash.com/photo-1578349035260-9f3d4042f1f7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bnVyc2VyeXxlbnwwfHwwfHx8MA%3D%3D",
+    "link": "#"
+  },
+  {
+    "id": 6,
+    "title": "Toddler furniture",
+    "image": "https://plus.unsplash.com/premium_photo-1661494383918-377389ffd9d7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8dG9kZGxlciUyMGZ1cm5pdHVyZXxlbnwwfHwwfHx8MA%3D%3D",
+    "link": "#"
+  },
+  {
+    "id": 7,
+    "title": "Baby apparel",
+    "image": "https://images.unsplash.com/photo-1766918780914-e19d9de76d85?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8YmFieSUyMGFwcGFyZWx8ZW58MHx8MHx8fDA%3D",
+    "link": "#"
+  },
+  {
+    "id": 8,
+    "title": "Nursing & feeding",
+    "image": "https://plus.unsplash.com/premium_photo-1700169524525-a5ba3d3896a6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bnVyc2luZyUyMGFuZCUyMGZlZWRpbmd8ZW58MHx8MHx8fDA%3D",
+    "link": "#"
+  },
+  {
+    "id": 9,
+    "title": "Diapers & wipes",
+    "image": "https://plus.unsplash.com/premium_photo-1661403717819-5b28278f25ef?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGRpYXBlcnMlMjBhbmQlMjB3aXBlc3xlbnwwfHwwfHx8MA%3D%3D",
+    "link": "#"
+  },
+  {
+    "id": 10,
+    "title": "Baby toys",
+    "image": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?q=80&w=2075&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "link": "#"
+  },
+  {
+    "id": 11,
+    "title": "Top 100 baby registry picks",
+    "image": "https://images.unsplash.com/photo-1559454403-b8fb88521f11?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8YmFieSUyMHRveXN8ZW58MHx8MHx8fDA%3D",
+    "link": "#"
+  },
+  {
+    "id": 12,
+    "title": "New Arrivals",
+    "type": "new-arrivals",
+    "link": "#"
+  }
+]

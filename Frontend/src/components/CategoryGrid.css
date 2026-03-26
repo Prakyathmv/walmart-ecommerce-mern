@@ -1,0 +1,134 @@
+.category-section {
+  max-width: 1280px;
+  margin: 40px auto;
+  padding: 20px 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: #2e2f32;
+}
+
+.see-less-link {
+  font-size: 14px;
+  text-decoration: underline;
+  color: #2e2f32;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 24px 16px;
+}
+
+
+@media (max-width: 1024px) {
+  .category-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+}
+
+.image-wrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: #ffeae1;
+  /* Light peach background from screenshot */
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.image-wrapper img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+
+}
+
+.category-title {
+  font-size: 14px;
+  color: #2e2f32;
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
+
+
+.new-arrivals-card {
+  display: block;
+}
+
+.new-arrivals-card .card-content {
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: #0071dc;
+
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.new-arrivals-card h3 {
+  margin: 0;
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: left;
+
+  align-self: flex-start;
+  
+}
+
+
+.new-arrivals-card .card-content {
+  align-items: flex-start;
+  
+  justify-content: center;
+  padding-left: 24px;
+}

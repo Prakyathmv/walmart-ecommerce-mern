@@ -1,0 +1,128 @@
+/* ============================================
+   Walmart-Style Carousel
+   ============================================ */
+
+.walmart-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 1500px;
+  margin: 12px auto;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f0f0f0;
+  /* ~3.5:1 aspect ratio like Walmart */
+  aspect-ratio: 3.5 / 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Track holds all slides */
+.walmart-carousel__track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Slide */
+.walmart-carousel__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  transform: translateX(30px);
+  pointer-events: none;
+}
+
+.walmart-carousel__slide--active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  z-index: 1;
+}
+
+/* Outgoing slide animation (next direction) */
+.walmart-carousel__track--next .walmart-carousel__slide--active {
+  animation: slideInFromRight 0.4s ease forwards;
+}
+
+.walmart-carousel__track--prev .walmart-carousel__slide--active {
+  animation: slideInFromLeft 0.4s ease forwards;
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Image fills the slide */
+.walmart-carousel__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* ----------------------------------------
+   Controls — top-right corner (Walmart style)
+   ---------------------------------------- */
+.walmart-carousel__controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.walmart-carousel__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid #d0d0d0;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.walmart-carousel__btn:hover {
+  background: #ffffff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.08);
+}
+
+.walmart-carousel__btn:active {
+  transform: scale(0.97);
+}
+
+/* Pause button is slightly larger */
+.walmart-carousel__btn--pause {
+  font-size: 16px;
+}

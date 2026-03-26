@@ -1,0 +1,117 @@
+.manage-orders-container {
+  max-width: 1900px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.manage-orders-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.manage-orders-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.manage-orders-container th,
+.manage-orders-container td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.manage-orders-container th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #444;
+}
+
+.manage-orders-container tr:hover td {
+  background-color: #f1f5f9;
+}
+
+.manage-orders-container input,
+.manage-orders-container select {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.manage-orders-container button {
+  padding: 6px 12px;
+  margin-right: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  background-color: #e2e8f0;
+  color: #333;
+}
+
+.manage-orders-container button:hover {
+  background-color: #cbd5e1;
+}
+
+.manage-orders-container button:last-child {
+  margin-right: 0;
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.manage-orders-container button:last-child:hover {
+  background-color: #fecaca;
+}
+
+.order-items-list {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 13px;
+  color: #555;
+}
+
+.order-items-list li {
+  margin-bottom: 4px;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  /* border-radius: 12px; */
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-placed {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-processing {
+  background: #fef3c7;
+  color: #3730a3;
+}
+
+.status-out-for-delivery {
+  background: #dbeafe;
+ color: #3730a3;
+}
+
+.status-delivered {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
