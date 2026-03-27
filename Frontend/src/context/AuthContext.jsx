@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setUser(null);
         setToken(null);
-        // Do not clear cart items on logout if that's preferred, or clear them if needed
+        
     };
 
     const value = {

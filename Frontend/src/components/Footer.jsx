@@ -4,13 +4,13 @@ import './Footer.css';
 const Footer = () => {
   return (
     <footer className="walmart-footer">
-      {/* Tier 1: Feedback Section */}
+      {}
       <div className="footer-feedback-section">
         <p>We'd love to hear what you think!</p>
         <button className="feedback-btn">Give feedback</button>
       </div>
 
-      {/* Tier 2: Links Section */}
+      {}
       <div className="footer-links-section">
         <ul className="footer-link-list">
           <li><a href="#">All Departments</a></li>
@@ -39,7 +39,7 @@ const Footer = () => {
         </ul>
       </div>
 
-      {/* Tier 3: Copyright Section */}
+      {}
       <div className="footer-copyright-section">
         <p>© 2026 Walmart. All Rights Reserved.</p>
       </div>

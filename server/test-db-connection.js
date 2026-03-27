@@ -12,7 +12,7 @@ mongoose.connect(MONGODB_URI, {
 .then(async () => {
   console.log('✓ Successfully connected to MongoDB');
   
-  // Try to list collections
+  
   const collections = await mongoose.connection.db.listCollections().toArray();
   console.log('Existing collections:', collections.map(c => c.name));
   

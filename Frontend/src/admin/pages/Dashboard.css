@@ -76,7 +76,7 @@
   font-weight: 500;
 }
 
-/* Analytics Section */
+
 .dashboard-analytics-section {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
@@ -105,7 +105,7 @@
   margin-top: 10px;
 }
 
-/* Recent Orders Table */
+
 .recent-orders-header {
   display: flex;
   justify-content: space-between;
@@ -190,7 +190,7 @@
   color: #dc2626;
 }
 
-/* Quick Actions */
+
 .quick-actions-section {
   background: white;
   border-radius: 12px;

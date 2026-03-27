@@ -20,7 +20,7 @@ export default function Dashboard({ setActivePage }) {
         const token = localStorage.getItem("adminToken");
         const headers = { Authorization: `Bearer ${token}` };
 
-        // Fetch all data in parallel
+        
         const [prodRes, ordRes, userRes] = await Promise.all([
           fetch("http://localhost:3000/api/products"), 
           fetch("http://localhost:3000/api/orders", { headers }),
@@ -38,7 +38,7 @@ export default function Dashboard({ setActivePage }) {
         let usersCount = 0;
         let totalRevenue = 0;
         
-        // Detailed Analytics State
+        
         let recentOrdersData = [];
         let chartDataArr = [];
 
@@ -51,11 +51,11 @@ export default function Dashboard({ setActivePage }) {
           ordersCount = orders.length;
           totalRevenue = orders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0);
           
-          // Sort by latest first
+          
           const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          recentOrdersData = sortedOrders.slice(0, 5); // Take last 5
+          recentOrdersData = sortedOrders.slice(0, 5); 
 
-          // Build last 7 days chart data
+          
           const last7Days = Array.from({length: 7}).map((_, i) => {
              const d = new Date();
              d.setDate(d.getDate() - i);
@@ -66,7 +66,7 @@ export default function Dashboard({ setActivePage }) {
              };
           }).reverse();
 
-          // Aggregate revenue
+          
           orders.forEach(o => {
              const dateVal = o.createdAt ? new Date(o.createdAt) : new Date();
              const dStr = dateVal.toISOString().split('T')[0];

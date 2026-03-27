@@ -1,16 +1,16 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Verify JWT token and attach user to request
+
 exports.protect = async (req, res, next) => {
   try {
     let token;
 
-    // Get token from Authorization header (Bearer token)
+    
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
-    // Or get token from cookies
+    
     else if (req.cookies.authToken) {
       token = req.cookies.authToken;
     }
@@ -25,21 +25,21 @@ exports.protect = async (req, res, next) => {
       });
     }
 
-    // Check for static admin token from frontend
+    
     if (token === 'admin-static-token') {
       let adminUser = await User.findOne({ email: 'admin@admin.com' });
       if (!adminUser) {
         adminUser = await User.findOne({ role: 'admin' });
       }
 
-      req.user = adminUser || { _id: '5f9d88b9c3b9b427f8e3d6a1', role: 'admin' }; // Dummy valid ObjectId as fallback
+      req.user = adminUser || { _id: '5f9d88b9c3b9b427f8e3d6a1', role: 'admin' }; 
       return next();
     }
 
-    // Verify token
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Find user and attach to request
+    
     req.user = await User.findById(decoded.id);
 
     if (!req.user) {
@@ -64,7 +64,7 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-// Check if user is admin
+
 exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

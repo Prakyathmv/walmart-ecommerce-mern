@@ -1,34 +1,39 @@
 const express = require('express');
 const { body, query, param, validationResult } = require('express-validator');
 const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 const path = require('path');
 const fs = require('fs');
 const Product = require('../models/Product');
 const { protect, authorize } = require('../middleware/auth');
 
-// ==================== Multer Setup ====================
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'products',
+    allowedFormats: ['jpg', 'png', 'jpeg', 'webp'],
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
 });
 const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-// ==================== Validation Rules ====================
+
 const validateProduct = [
   body('name').notEmpty().trim().withMessage('Product name is required'),
   body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
   body('category').optional().trim(),
 ];
 
-// ==================== Create Product ====================
-// Note: We're applying the upload middleware before protect/validate for simplicity
+
+
 router.post('/', protect, upload.single('image'), validateProduct, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -50,7 +55,7 @@ router.post('/', protect, upload.single('image'), validateProduct, async (req, r
     let imageUrl = '';
 
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      imageUrl = req.file.path;
     }
 
     const product = new Product({
@@ -89,31 +94,31 @@ router.post('/', protect, upload.single('image'), validateProduct, async (req, r
   }
 });
 
-// ==================== List Products ====================
+
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10, category, q, minPrice, maxPrice, sort = '-createdAt' } = req.query;
 
-    // Build filter
+
     const filter = {};
     if (category) filter.category = category;
-    if (q) filter.name = { $regex: q, $options: 'i' }; // Case-insensitive search
+    if (q) filter.name = { $regex: q, $options: 'i' };
     if (minPrice) filter.price = { ...filter.price, $gte: parseFloat(minPrice) };
     if (maxPrice) filter.price = { ...filter.price, $lte: parseFloat(maxPrice) };
 
-    // Parse pagination
+
     const pageNum = Math.max(1, parseInt(page));
     const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
     const skip = (pageNum - 1) * limitNum;
 
-    // Fetch products
+
     const products = await Product.find(filter)
       .sort(sort)
       .skip(skip)
       .limit(limitNum)
       .lean();
 
-    // Total count
+
     const total = await Product.countDocuments(filter);
 
     res.status(200).json({
@@ -146,7 +151,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ==================== Get Product by ID ====================
+
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).lean();
@@ -195,7 +200,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ==================== Update Product ====================
+
 router.put('/:id', protect, validateProduct, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -225,7 +230,7 @@ router.put('/:id', protect, validateProduct, async (req, res) => {
       });
     }
 
-    // Check ownership (allow admin to update anyone's products)
+
     if (
       req.user.role !== 'admin' &&
       (!product.createdBy || product.createdBy.toString() !== req.user._id.toString())
@@ -239,7 +244,7 @@ router.put('/:id', protect, validateProduct, async (req, res) => {
       });
     }
 
-    // Update fields
+
     const { name, brand, price, category, stock, status } = req.body;
     product.name = name || product.name;
     product.brand = brand || product.brand;
@@ -284,7 +289,7 @@ router.put('/:id', protect, validateProduct, async (req, res) => {
   }
 });
 
-// ==================== Delete Product ====================
+
 router.delete('/:id', protect, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -299,7 +304,7 @@ router.delete('/:id', protect, async (req, res) => {
       });
     }
 
-    // Check ownership (allow admin to delete anyone's products)
+
     if (
       req.user.role !== 'admin' &&
       (!product.createdBy || product.createdBy.toString() !== req.user._id.toString())
@@ -315,14 +320,24 @@ router.delete('/:id', protect, async (req, res) => {
 
     await Product.findByIdAndDelete(req.params.id);
 
-    // Delete associated image file from local storage if it exists
+
     if (product.imageUrl) {
-      const imagePath = path.join(__dirname, '..', product.imageUrl);
-      fs.unlink(imagePath, (err) => {
-        if (err) {
-          console.error(`Failed to delete image at ${imagePath}:`, err);
-        }
-      });
+      if (product.imageUrl.includes('cloudinary.com')) {
+        const urlParts = product.imageUrl.split('/');
+        const filename = urlParts[urlParts.length - 1];
+        const publicId = `products/${filename.split('.')[0]}`;
+
+        cloudinary.uploader.destroy(publicId, (err, result) => {
+          if (err) console.error(`Failed to delete image from Cloudinary:`, err);
+        });
+      } else {
+        const imagePath = path.join(__dirname, '..', product.imageUrl);
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.error(`Failed to delete image at ${imagePath}:`, err);
+          }
+        });
+      }
     }
 
     res.status(200).json({

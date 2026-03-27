@@ -44,7 +44,7 @@ const ProductList = () => {
             <div className="product-card">
               <div className="product-image">
                 {product.imageUrl ? (
-                  <img src={`http://localhost:3000${product.imageUrl}`} alt={product.name} />
+                  <img src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000${product.imageUrl}`)} alt={product.name} />
                 ) : (
                   <div className="no-image">No Image Available</div>
                 )}

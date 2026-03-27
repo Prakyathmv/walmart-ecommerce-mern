@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a password'],
       minlength: 6,
-      select: false, // Don't return password by default
+      select: false, 
     },
     name: {
       type: String,
@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Hash password before saving
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
@@ -49,12 +49,12 @@ userSchema.pre('save', async function (next) {
   }
 });
 
-// Method to compare password
+
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Use a separate connection for the 'login' database
+
 const loginDbConnection = mongoose.createConnection(process.env.LOGIN_DB_URI || 'mongodb://127.0.0.1:27017/Login');
 
 loginDbConnection.on('error', console.error.bind(console, 'Login DB connection error:'));

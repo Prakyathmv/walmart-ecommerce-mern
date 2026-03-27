@@ -4,8 +4,8 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 const { protect } = require('../middleware/auth');
 
-// ==================== Create Order (Checkout) ====================
-// POST /api/orders
+
+
 router.post('/', protect, async (req, res) => {
   try {
     const { items, shippingAddress, paymentMethod } = req.body;
@@ -19,7 +19,7 @@ router.post('/', protect, async (req, res) => {
       return res.status(400).json({ success: false, error: { message: 'No order items' } });
     }
 
-    // Security: Verify prices against database and calculate total securely
+    
     let calculatedTotal = 0;
     const verifiedItems = [];
 
@@ -29,29 +29,29 @@ router.post('/', protect, async (req, res) => {
         return res.status(404).json({ success: false, error: { message: `Product not found: ${item.name}` } });
       }
 
-      // Check stock
+      
       if (product.stock < item.quantity) {
         return res.status(400).json({ success: false, error: { message: `Insufficient stock for ${product.name}` } });
       }
 
-      // Add to verified list with DB price
+      
       verifiedItems.push({
         productId: product._id,
         name: product.name,
-        price: product.price, // Trusting backend price!
+        price: product.price, 
         quantity: item.quantity,
         imageUrl: product.imageUrl
       });
 
       calculatedTotal += (product.price * item.quantity);
 
-      // Optional: Decrease product stock
-      // product.stock -= item.quantity;
-      // await product.save();
+      
+      
+      
     }
 
     const order = new Order({
-      userId: userId || null, // null for guest
+      userId: userId || null, 
       items: verifiedItems,
       shippingAddress,
       paymentMethod,
@@ -78,12 +78,12 @@ router.post('/', protect, async (req, res) => {
   }
 });
 
-// ==================== Get My Orders ====================
-// GET /api/orders/myorders
-// In a real app this would have the protect middleware: router.get('/myorders', protect, ...)
+
+
+
 router.get('/myorders', async (req, res) => {
   try {
-    const { userId } = req.query; // If not using session, pass userId explicitly for dev purposes
+    const { userId } = req.query; 
 
     if (!userId) {
       return res.status(401).json({ success: false, error: { message: 'Not authorized' } });
@@ -106,7 +106,7 @@ router.get('/myorders', async (req, res) => {
   }
 });
 
-// ==================== ADMIN: Get All Orders ====================
+
 router.get('/', async (req, res) => {
   try {
     const orders = await Order.find({}).sort({ createdAt: -1 });
@@ -119,7 +119,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ==================== ADMIN: Update Order Status ====================
+
 router.put('/:id', async (req, res) => {
   try {
     const { status } = req.body;
@@ -135,7 +135,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// ==================== ADMIN: Delete Order ====================
+
 router.delete('/:id', async (req, res) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);

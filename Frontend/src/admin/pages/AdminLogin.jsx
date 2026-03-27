@@ -12,7 +12,7 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Static admin credentials check
+    
     if (email === "admin@gmail.com" && password === "admin") {
       localStorage.setItem("adminToken", "admin-static-token");
       navigate('/admin/dashboard');

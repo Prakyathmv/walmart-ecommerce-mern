@@ -6,7 +6,7 @@ const MONGODB_URI = 'mongodb://127.0.0.1:27017/product-db';
 const uploadsDir = path.join(__dirname, 'uploads');
 const imgSrc = path.join(__dirname, '../Frontend/src/assets/product images');
 
-// Mapping: product name substring => image filename
+
 const nameToImage = [
   { match: 'Nutricost Whey Protein', img: 'image-5.jpg' },
   { match: 'Gatorade', img: 'image-6.jpg' },
@@ -16,10 +16,10 @@ const nameToImage = [
   { match: 'V8 Deliciously Green', img: 'image-2.jpg' },
 ];
 
-// Duplicates to delete (keep only the first occurrence added)
+
 const duplicateIds = [
-  '69b302aec5d723398610d67a', // duplicate Core Power
-  '69b302bdc5d723398610d67e', // duplicate V8
+  '69b302aec5d723398610d67a', 
+  '69b302bdc5d723398610d67e', 
 ];
 
 const Product = require('./models/Product');
@@ -28,7 +28,7 @@ async function run() {
   await mongoose.connect(MONGODB_URI);
   console.log('Connected to MongoDB');
 
-  // Delete duplicates first
+  
   for (const id of duplicateIds) {
     try {
       const result = await Product.findByIdAndDelete(id);
@@ -38,7 +38,7 @@ async function run() {
     } catch (e) { console.log(`Could not delete ${id}: ${e.message}`); }
   }
 
-  // Get all products with no/empty image
+  
   const products = await Product.find({ $or: [{ imageUrl: '' }, { imageUrl: null }, { imageUrl: { $exists: false } }] });
   console.log(`Found ${products.length} products without images`);
 

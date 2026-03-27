@@ -29,18 +29,18 @@ const Register = () => {
       
       const { accessToken, user } = response.data.data;
 
-      // Persist using AuthContext
+      
       login(user, accessToken);
 
       console.log('✓ Registration successful:', user);
       
-      // Redirect to home or dashboard
+      
       navigate('/');
       
     } catch (err) {
       let errorMessage = 'Registration failed. Please try again.';
       if (err.response?.data?.error?.details) {
-        // Extract specific validation errors if available
+        
         const details = err.response.data.error.details;
         errorMessage = Object.values(details).join(', ');
       } else if (err.response?.data?.error?.message) {

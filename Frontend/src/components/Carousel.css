@@ -1,6 +1,4 @@
-/* ============================================
-   Walmart-Style Carousel
-   ============================================ */
+
 
 .walmart-carousel {
   position: relative;
@@ -10,19 +8,19 @@
   border-radius: 12px;
   overflow: hidden;
   background: #f0f0f0;
-  /* ~3.5:1 aspect ratio like Walmart */
+  
   aspect-ratio: 3.5 / 1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Track holds all slides */
+
 .walmart-carousel__track {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
-/* Slide */
+
 .walmart-carousel__slide {
   position: absolute;
   inset: 0;
@@ -39,7 +37,7 @@
   z-index: 1;
 }
 
-/* Outgoing slide animation (next direction) */
+
 .walmart-carousel__track--next .walmart-carousel__slide--active {
   animation: slideInFromRight 0.4s ease forwards;
 }
@@ -72,7 +70,7 @@
   }
 }
 
-/* Image fills the slide */
+
 .walmart-carousel__image {
   width: 100%;
   height: 100%;
@@ -81,9 +79,7 @@
   display: block;
 }
 
-/* ----------------------------------------
-   Controls — top-right corner (Walmart style)
-   ---------------------------------------- */
+
 .walmart-carousel__controls {
   position: absolute;
   top: 12px;
@@ -122,7 +118,7 @@
   transform: scale(0.97);
 }
 
-/* Pause button is slightly larger */
+
 .walmart-carousel__btn--pause {
   font-size: 16px;
 }

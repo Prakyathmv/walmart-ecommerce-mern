@@ -22,7 +22,7 @@ const Checkout = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // If cart is empty, redirect back to cart
+    
     if (cartItems.length === 0) {
         navigate('/cart');
         return null;
@@ -42,7 +42,7 @@ const Checkout = () => {
 
         try {
             const orderPayload = {
-                // Formatting data to match backend schema expectations
+                
                 items: cartItems.map(item => ({
                     productId: item.productId,
                     name: item.name,

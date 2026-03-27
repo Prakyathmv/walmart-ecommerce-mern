@@ -124,7 +124,7 @@ export default function ManageProducts() {
                 <td>
                   {product.imageUrl ? (
                     <img
-                      src={`http://localhost:3000${product.imageUrl}`}
+                      src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000${product.imageUrl}`)}
                       alt={product.name}
                       style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "4px" }}
                     />
@@ -203,7 +203,7 @@ export default function ManageProducts() {
                 <td>
                   {product.imageUrl ? (
                     <img
-                      src={`http://localhost:3000${product.imageUrl}`}
+                      src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000${product.imageUrl}`)}
                       alt={product.name}
                       style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "4px" }}
                     />

@@ -30,7 +30,7 @@ const AddProduct = ({ onProductAdded }) => {
     setSuccess('');
     setLoading(true);
 
-    // Validate inputs
+    
     if (!formData.name || !formData.price) {
       setError('Name and price are required');
       setLoading(false);
@@ -60,12 +60,12 @@ const AddProduct = ({ onProductAdded }) => {
           description: ''
         });
 
-        // Trigger callback if provided (to refresh product list)
+        
         if (onProductAdded) {
           onProductAdded(response.data.data.product);
         }
 
-        // Clear success message after 3 seconds
+        
         setTimeout(() => setSuccess(''), 3000);
       }
     } catch (err) {

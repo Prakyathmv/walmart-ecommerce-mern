@@ -39,7 +39,7 @@ export const Carousel = ({ data }) => {
 
   return (
     <div className="walmart-carousel">
-      {/* Slides */}
+      {}
       <div className={`walmart-carousel__track ${isAnimating ? `walmart-carousel__track--${direction}` : ""}`}>
         {data.map((item, idx) => (
           <div
@@ -56,7 +56,7 @@ export const Carousel = ({ data }) => {
         ))}
       </div>
 
-      {/* Controls — top right corner, Walmart-style */}
+      {}
       <div className="walmart-carousel__controls">
         <button
           className="walmart-carousel__btn"

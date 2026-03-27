@@ -8,9 +8,9 @@ async function run() {
   try {
     console.log('Testing User model connection...');
 
-    // Check collection name:
+    
     console.log(`Collection name: ${User.collection.collectionName}`);
-    // Check database name:
+    
     console.log(`Database name: ${User.db.name}`);
 
     const testEmail = `test_${Date.now()}@testlogin.com`;

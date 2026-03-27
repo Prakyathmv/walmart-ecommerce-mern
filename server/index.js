@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/product-db';
 
-// ==================== Logger Setup ====================
+
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
@@ -26,9 +26,9 @@ const logger = winston.createLogger({
 
 const path = require('path');
 
-// ==================== Middleware ====================
+
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" } // allow images to load from cross origin
+  crossOriginResourcePolicy: { policy: "cross-origin" } 
 }));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ limit: '10kb', extended: true }));
@@ -38,18 +38,18 @@ app.use(cors({
   credentials: true,
 }));
 
-// Serve uploaded files statically
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Global rate limiter
+
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10000, // limit each IP to 10000 requests per windowMs (raised for development)
+  windowMs: 15 * 60 * 1000, 
+  max: 10000, 
   message: 'Too many requests from this IP, please try again later.',
 });
 app.use('/api/', limiter);
 
-// ==================== Health Check ====================
+
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -61,17 +61,17 @@ app.get('/health', (req, res) => {
   });
 });
 
-// ==================== Routes (placeholder) ====================
-// Auth routes (to be implemented)
+
+
 app.use('/api/auth', require('./routes/auth'));
 
-// Product routes (to be implemented)
+
 app.use('/api/products', require('./routes/products'));
 
-// Order routes
+
 app.use('/api/orders', require('./routes/orders'));
 
-// ==================== Error Handling Middleware ====================
+
 app.use((err, req, res, next) => {
   logger.error(`Error: ${err.message}`);
 
@@ -88,7 +88,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
+
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -99,14 +99,14 @@ app.use((req, res) => {
   });
 });
 
-// ==================== MongoDB Connection ====================
+
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
   .then(() => {
     logger.info('✓ Connected to MongoDB');
-    // Start server after DB connection
+    
     app.listen(PORT, () => {
       logger.info(`✓ Server running on http://localhost:${PORT}`);
       logger.info(`✓ Health check: GET http://localhost:${PORT}/health`);

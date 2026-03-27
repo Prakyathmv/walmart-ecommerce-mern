@@ -1,4 +1,4 @@
-/* Walmart Enterprise Admin Portal Styling */
+
 
 .admin-portal-layout {
   display: flex;
@@ -6,14 +6,14 @@
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: #f2f8fd;
-  /* Walmart light background */
+ 
 }
 
-/* Header */
+
 .admin-top-nav {
   height: 64px;
   background-color: #0071dc;
-  /* Signature blue */
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,17 +65,17 @@
 .admin-profile-menu i {
   font-size: 24px;
   color: #ffc220;
-  /* Walmart yellow accent */
+
 }
 
-/* Body Container */
+
 .admin-body-container {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
 
-/* Sidebar */
+
 .admin-sidebar-menu {
   width: 260px;
   background-color: #ffffff;
@@ -157,7 +157,7 @@
   color: #b32015;
 }
 
-/* Main Viewport */
+
 .admin-main-viewport {
   flex: 1;
   background-color: #f2f8fd;
@@ -165,7 +165,7 @@
   padding: 32px;
 }
 
-/* Scrollbar styling for main viewport */
+
 .admin-main-viewport::-webkit-scrollbar {
   width: 8px;
 }

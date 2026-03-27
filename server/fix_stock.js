@@ -8,7 +8,7 @@ async function run() {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    // Update all products where stock is <= 0 or status is 'Out of Stock' or stock is undefined
+    
     const result = await Product.updateMany(
       {
         $or: [

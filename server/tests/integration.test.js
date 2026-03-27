@@ -1,5 +1,5 @@
-// Integration Tests for Product API
-// Run with: npm test (after configuring jest)
+
+
 
 const request = require('supertest');
 const mongoose = require('mongoose');
@@ -13,13 +13,13 @@ describe('Product Management API', () => {
   let productId;
 
   beforeAll(async () => {
-    // Connect to test database
+    
     const testDbUri = process.env.MONGODB_TEST_URI || 'mongodb://127.0.0.1:27017/product-db-test';
     await mongoose.connect(testDbUri);
   });
 
   afterAll(async () => {
-    // Clean up
+    
     await User.deleteMany({});
     await Product.deleteMany({});
     await mongoose.connection.close();

@@ -82,11 +82,11 @@
   margin-bottom: 4px;
 }
 
-/* Status badges */
+
 .status-badge {
   display: inline-block;
   padding: 3px 10px;
-  /* border-radius: 12px; */
+  
   font-size: 12px;
   font-weight: 600;
 }

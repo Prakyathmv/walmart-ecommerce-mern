@@ -14,7 +14,7 @@ const CATEGORIES = [
   "Beauty & Personal Care",
 ];
 
-// REPLACED BY NUMBER INPUT
+
 
 export default function AddProduct() {
   const [productName, setProductName] = useState("");

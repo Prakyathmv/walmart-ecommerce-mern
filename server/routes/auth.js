@@ -3,23 +3,25 @@ const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
+const { sendEmail } = require('../utils/send-email');
+const Otp = require('../models/Otp');
 
 const router = express.Router();
 
-// ==================== Helper Functions ====================
 
-// Generate JWT token
+
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || '1d',
   });
 };
 
-// Validation middleware
+
 const validateEmail = body('email').isEmail().normalizeEmail();
 const validatePassword = body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters');
 
-// ==================== Register ====================
+
 router.post(
   '/register',
   [
@@ -46,7 +48,7 @@ router.post(
     try {
       const { email, password, name } = req.body;
 
-      // Check if user already exists
+
       let user = await User.findOne({ email });
       if (user) {
         return res.status(400).json({
@@ -59,19 +61,19 @@ router.post(
         });
       }
 
-      // Create user
+
       user = new User({ email, password, name });
       await user.save();
 
-      // Generate token
+
       const token = generateToken(user._id);
 
-      // Return response
+
       res.status(201).json({
         success: true,
         data: {
           accessToken: token,
-          expiresIn: 86400, // 1 day in seconds
+          expiresIn: 86400,
           user: {
             id: user._id,
             email: user.email,
@@ -93,7 +95,7 @@ router.post(
   }
 );
 
-// ==================== Login ====================
+
 router.post(
   '/login',
   [
@@ -119,7 +121,7 @@ router.post(
     try {
       const { email, password } = req.body;
 
-      // Find user and select password field
+
       const user = await User.findOne({ email }).select('+password');
 
       if (!user) {
@@ -132,7 +134,7 @@ router.post(
         });
       }
 
-      // Check password
+
       const isPasswordCorrect = await user.comparePassword(password);
       if (!isPasswordCorrect) {
         return res.status(401).json({
@@ -144,15 +146,15 @@ router.post(
         });
       }
 
-      // Generate token
+
       const token = generateToken(user._id);
 
-      // Return response
+
       res.status(200).json({
         success: true,
         data: {
           accessToken: token,
-          expiresIn: 86400, // 1 day in seconds
+          expiresIn: 86400,
           user: {
             id: user._id,
             email: user.email,
@@ -173,7 +175,7 @@ router.post(
   }
 );
 
-// ==================== Forgot Password ====================
+
 router.post(
   '/forgot-password',
   [validateEmail],
@@ -183,7 +185,7 @@ router.post(
       const user = await User.findOne({ email });
 
       if (!user) {
-        // Don't reveal if email exists or not (security best practice)
+
         return res.status(200).json({
           success: true,
           data: {
@@ -192,28 +194,28 @@ router.post(
         });
       }
 
-      // Generate reset token (valid for 1 hour)
+
       const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
 
-      // Save hashed token and expiry to user (hash the token for security)
+
       user.resetPasswordToken = require('crypto')
         .createHash('sha256')
         .update(resetToken)
         .digest('hex');
-      user.resetPasswordExpire = new Date(Date.now() + 3600000); // 1 hour
+      user.resetPasswordExpire = new Date(Date.now() + 3600000);
       await user.save();
 
-      // In production, send email with reset link:
-      // const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
-      // await sendEmail(user.email, 'Password Reset Link', resetUrl);
+
+
+
 
       res.status(200).json({
         success: true,
         data: {
           message: 'If that account exists, a password reset email has been sent.',
-          // For testing purposes, return token (remove in production)
+
           resetToken: process.env.NODE_ENV === 'development' ? resetToken : undefined,
         },
       });
@@ -229,7 +231,93 @@ router.post(
   }
 );
 
-// ==================== Reset Password ====================
+
+router.post(
+  '/send-otp',
+  [validateEmail],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, error: { message: 'Invalid email' } });
+    }
+
+    try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return res.status(404).json({ success: false, error: { message: 'User not found. Please register first.' } });
+      }
+
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+      await Otp.deleteMany({ email });
+      await Otp.create({ email, otp: otpCode });
+
+      const subject = 'Your Login Verification Code';
+      const html = `<h2>Walmart Clone Verification</h2><p>Your one-time password is: <strong>${otpCode}</strong></p><p>This code will expire in 5 minutes.</p>`;
+
+      await sendEmail(email, subject, html);
+
+      res.status(200).json({ success: true, data: { message: 'OTP sent successfully' } });
+    } catch (error) {
+      console.error('OTP Send Error:', error);
+      res.status(500).json({ success: false, error: { message: 'Server error sending OTP' } });
+    }
+  }
+);
+
+
+router.post(
+  '/verify-otp',
+  [
+    validateEmail,
+    body('otp').isLength({ min: 6, max: 6 }).isNumeric().withMessage('Invalid OTP format')
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, error: { message: 'Invalid data formatting' } });
+    }
+
+    try {
+      const { email, otp } = req.body;
+
+      const validOtp = await Otp.findOne({ email, otp });
+      if (!validOtp) {
+        return res.status(400).json({ success: false, error: { message: 'Invalid or expired OTP' } });
+      }
+
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ success: false, error: { message: 'User not found' } });
+      }
+
+      await Otp.deleteMany({ email });
+
+      const token = generateToken(user._id);
+
+      res.status(200).json({
+        success: true,
+        data: {
+          accessToken: token,
+          expiresIn: 86400,
+          user: {
+            id: user._id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          },
+        },
+      });
+    } catch (error) {
+      console.error('OTP Verify Error:', error);
+      res.status(500).json({ success: false, error: { message: 'Server error verifying OTP' } });
+    }
+  }
+);
+
+
 router.post(
   '/reset-password',
   [
@@ -255,7 +343,7 @@ router.post(
     try {
       const { token, newPassword } = req.body;
 
-      // Verify token
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findById(decoded.id);
 
@@ -269,7 +357,7 @@ router.post(
         });
       }
 
-      // Update password
+
       user.password = newPassword;
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
@@ -293,7 +381,7 @@ router.post(
   }
 );
 
-// ==================== Get Current User ====================
+
 router.get('/me', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -320,9 +408,9 @@ router.get('/me', protect, async (req, res) => {
   }
 });
 
-// ==================== Admin User Management ====================
 
-// GET all users (Admin only)
+
+
 router.get('/users', protect, async (req, res) => {
   try {
     const users = await User.find().select('-password');
@@ -345,7 +433,7 @@ router.get('/users', protect, async (req, res) => {
   }
 });
 
-// UPDATE user (Admin only)
+
 router.put('/users/:id', protect, async (req, res) => {
   try {
     const { name, role } = req.body;
@@ -378,7 +466,7 @@ router.put('/users/:id', protect, async (req, res) => {
   }
 });
 
-// DELETE user (Admin only)
+
 router.delete('/users/:id', protect, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);

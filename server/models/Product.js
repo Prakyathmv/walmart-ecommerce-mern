@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       trim: true,
-      index: true, // For filtering by category
+      index: true, 
     },
     imageUrl: {
       type: String,

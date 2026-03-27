@@ -14,7 +14,7 @@ export default function ManageOrders() {
 
   const fetchOrders = async () => {
     try {
-      // In a real app with auth, you'd add headers: { Authorization: `Bearer ${token}` }
+      
       const response = await fetch("http://localhost:3000/api/orders");
       const data = await response.json();
       if (data.success) {
@@ -36,13 +36,13 @@ export default function ManageOrders() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          // 'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          
         },
         body: JSON.stringify({ status: editData.status })
       });
       const data = await response.json();
       if (data.success) {
-        // Update local state
+        
         const updated = orders.map((o) => (o._id === id ? data.data.order : o));
         setOrders(updated);
         setEditingId(null);
@@ -64,7 +64,7 @@ export default function ManageOrders() {
     try {
       const response = await fetch(`http://localhost:3000/api/orders/${id}`, {
         method: "DELETE",
-        // headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+        
       });
       const data = await response.json();
       if (data.success) {

@@ -27,7 +27,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-portal-layout">
-      {/* Top Navigation Bar */}
+      {}
       <header className="admin-top-nav">
         <div className="admin-nav-left">
            <img src={walmartLogo} alt="Walmart Logo" className="admin-brand-logo" />
@@ -42,7 +42,7 @@ export default function AdminDashboard() {
       </header>
 
       <div className="admin-body-container">
-        {/* Sidebar */}
+        {}
         <aside className="admin-sidebar-menu">
           <nav>
             <button 
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
           </div>
         </aside>
 
-        {/* Main Content Area */}
+        {}
         <main className="admin-main-viewport">
           {renderPage()}
         </main>

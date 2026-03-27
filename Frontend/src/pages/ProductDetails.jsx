@@ -37,7 +37,7 @@ const ProductDetails = () => {
         if (id) {
             fetchProduct();
         }
-        // Scroll to top when id changes
+        
         window.scrollTo(0, 0);
     }, [id]);
 
@@ -46,7 +46,7 @@ const ProductDetails = () => {
         addToCart(product);
         setTimeout(() => {
             setAddingToCart(false);
-            // Optional: User feedback could be better than alert, like a toast
+            
         }, 500);
     };
 
@@ -68,7 +68,7 @@ const ProductDetails = () => {
             <div className="product-details-container">
                 <div className="product-details-image-section">
                     {product.imageUrl ? (
-                        <img src={`http://localhost:3000${product.imageUrl}`} alt={product.name} className="product-main-image" />
+                        <img src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000${product.imageUrl}`)} alt={product.name} className="product-main-image" />
                     ) : (
                         <div className="product-details-no-image">No Image Available</div>
                     )}
@@ -93,7 +93,7 @@ const ProductDetails = () => {
                         <p>
                             Experience premium quality with the {product.name} from {product.brand}. 
                             Designed for modern needs, this product perfectly fits your lifestyle.
-                            {/* Placeholder description as backend model might not have strict description field */}
+                            {}
                         </p>
                     </div>
 

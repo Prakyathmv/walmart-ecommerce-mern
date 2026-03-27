@@ -3,7 +3,7 @@ import Navigation from "../components/Navigation";
 import { Carousel } from "../components/Carousel";
 import HeroGrid from "../components/HeroGrid";
 import CategoryGrid from "../components/CategoryGrid";
-import ProductList from "../components/ProductList"; // Added ProductList import
+import ProductList from "../components/ProductList"; 
 import slides from "../Data/CarousalData.js";
 
 export const Home = () => {

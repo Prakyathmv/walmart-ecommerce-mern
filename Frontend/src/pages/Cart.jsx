@@ -27,7 +27,7 @@ const Cart = () => {
                         <div key={item.productId} className="cart-item-card">
                             <div className="cart-item-image">
                                 {item.imageUrl ? (
-                                    <img src={`http://localhost:3000${item.imageUrl}`} alt={item.name} />
+                                    <img src={(item.imageUrl && item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:3000${item.imageUrl}`)} alt={item.name} />
                                 ) : (
                                     <div className="cart-no-image">No Image</div>
                                 )}

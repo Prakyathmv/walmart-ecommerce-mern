@@ -29,7 +29,7 @@ const orderSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      // Optional: allow guest checkout by not requiring this
+      
     },
     items: [orderItemSchema],
     totalPrice: {
