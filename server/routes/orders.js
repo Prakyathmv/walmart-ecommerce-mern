@@ -6,8 +6,6 @@ const User = require('../models/User');
 const { Resend } = require('resend');
 const { protect } = require('../middleware/auth');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 
 
 
@@ -67,20 +65,24 @@ router.post('/', protect, async (req, res) => {
 
     // --- Send Order Confirmation Email via Resend ---
     try {
-      const user = await User.findById(userId).select('email name');
-      if (user && user.email) {
-        const itemsHtml = verifiedItems.map(item => `
-          <tr>
-            <td style="padding:8px;border-bottom:1px solid #eee;">${item.name}</td>
-            <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
-            <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">$${(item.price * item.quantity).toFixed(2)}</td>
-          </tr>`).join('');
+      if (!process.env.RESEND_API_KEY) {
+        console.warn('RESEND_API_KEY missing, skipping order confirmation email');
+      } else {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const user = await User.findById(userId).select('email name');
+        if (user && user.email) {
+          const itemsHtml = verifiedItems.map(item => `
+            <tr>
+              <td style="padding:8px;border-bottom:1px solid #eee;">${item.name}</td>
+              <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
+              <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">$${(item.price * item.quantity).toFixed(2)}</td>
+            </tr>`).join('');
 
-        await resend.emails.send({
-          from: 'orders@yourdomain.com',
-          to: user.email,
-          subject: `Order Confirmed! #${savedOrder._id.toString().slice(-6).toUpperCase()}`,
-          html: `
+          await resend.emails.send({
+            from: 'orders@yourdomain.com',
+            to: user.email,
+            subject: `Order Confirmed! #${savedOrder._id.toString().slice(-6).toUpperCase()}`,
+            html: `
             <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
               <h2 style="color:#0071ce;">🛒 Order Confirmed!</h2>
               <p>Hi <strong>${user.name || 'Valued Customer'}</strong>,</p>
@@ -109,7 +111,8 @@ router.post('/', protect, async (req, res) => {
               <p style="color:#999;font-size:12px;">Order ID: ${savedOrder._id}</p>
             </div>
           `
-        });
+          });
+        }
       }
     } catch (emailError) {
       console.warn('Order confirmation email failed (non-critical):', emailError.message);
