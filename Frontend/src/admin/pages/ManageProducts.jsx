@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ManageProducts.css";
+import API_BASE from "../../utils/api";
 
 const CATEGORIES = [
   "Grocery & Essentials",
@@ -25,7 +26,7 @@ export default function ManageProducts() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/products");
+      const response = await fetch(`${API_BASE}/api/products`);
       const data = await response.json();
       if (data.success) {
         setProducts(data.data.products);
@@ -43,7 +44,7 @@ export default function ManageProducts() {
   const saveEdit = async (id) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:3000/api/products/${id}`, {
+      const response = await fetch(`${API_BASE}/api/products/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +82,7 @@ export default function ManageProducts() {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:3000/api/products/${id}`, {
+      const response = await fetch(`${API_BASE}/api/products/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -124,7 +125,7 @@ export default function ManageProducts() {
                 <td>
                   {product.imageUrl ? (
                     <img
-                      src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000${product.imageUrl}`)}
+                      src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `${API_BASE}${product.imageUrl}`)}
                       alt={product.name}
                       style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "4px" }}
                     />
@@ -203,7 +204,7 @@ export default function ManageProducts() {
                 <td>
                   {product.imageUrl ? (
                     <img
-                      src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000${product.imageUrl}`)}
+                      src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `${API_BASE}${product.imageUrl}`)}
                       alt={product.name}
                       style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "4px" }}
                     />

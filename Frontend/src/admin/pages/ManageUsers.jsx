@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ManageUsers.css";
+import API_BASE from "../../utils/api";
 
 const ROLES = ["user", "admin"];
 const STATUSES = ["Active", "Inactive"];
@@ -20,7 +21,7 @@ export default function ManageUsers() {
     setError(null);
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch("http://localhost:3000/api/auth/users", {
+      const response = await fetch(`${API_BASE}/api/auth/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -57,7 +58,7 @@ export default function ManageUsers() {
   const saveEdit = async (id) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:3000/api/auth/users/${id}`, {
+      const response = await fetch(`${API_BASE}/api/auth/users/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +94,7 @@ export default function ManageUsers() {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:3000/api/auth/users/${id}`, {
+      const response = await fetch(`${API_BASE}/api/auth/users/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

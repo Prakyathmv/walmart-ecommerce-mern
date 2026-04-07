@@ -2,6 +2,7 @@ import React from 'react';
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import './Cart.css';
+import API_BASE from '../utils/api';
 
 const Cart = () => {
     const { cartItems, cartTotalAmount, cartTotalItems, updateQuantity, removeFromCart } = useCart();
@@ -27,7 +28,7 @@ const Cart = () => {
                         <div key={item.productId} className="cart-item-card">
                             <div className="cart-item-image">
                                 {item.imageUrl ? (
-                                    <img src={(item.imageUrl && item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:3000${item.imageUrl}`)} alt={item.name} />
+                                    <img src={(item.imageUrl && item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE}${item.imageUrl}`)} alt={item.name} />
                                 ) : (
                                     <div className="cart-no-image">No Image</div>
                                 )}

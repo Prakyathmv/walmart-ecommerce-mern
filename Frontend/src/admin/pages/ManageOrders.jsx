@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ManageOrders.css";
+import API_BASE from "../../utils/api";
 
 const STATUSES = ["Placed", "Processing", "Out for Delivery", "Delivered", "Cancelled"];
 
@@ -15,7 +16,7 @@ export default function ManageOrders() {
   const fetchOrders = async () => {
     try {
       
-      const response = await fetch("http://localhost:3000/api/orders");
+      const response = await fetch(`${API_BASE}/api/orders`);
       const data = await response.json();
       if (data.success) {
         setOrders(data.data.orders);
@@ -32,7 +33,7 @@ export default function ManageOrders() {
 
   const saveEdit = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/orders/${id}`, {
+      const response = await fetch(`${API_BASE}/api/orders/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +63,7 @@ export default function ManageOrders() {
   const deleteOrder = async (id) => {
     if (!window.confirm("Are you sure you want to delete this order?")) return;
     try {
-      const response = await fetch(`http://localhost:3000/api/orders/${id}`, {
+      const response = await fetch(`${API_BASE}/api/orders/${id}`, {
         method: "DELETE",
         
       });

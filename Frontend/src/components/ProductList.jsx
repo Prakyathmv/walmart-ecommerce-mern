@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import './ProductList.css';
+import API_BASE from '../utils/api';
 
 const ProductList = () => {
   const { addToCart } = useCart();
@@ -12,7 +13,7 @@ const ProductList = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/products');
+        const response = await fetch(`${API_BASE}/api/products`);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -44,7 +45,7 @@ const ProductList = () => {
             <div className="product-card">
               <div className="product-image">
                 {product.imageUrl ? (
-                  <img src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000${product.imageUrl}`)} alt={product.name} />
+                  <img src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `${API_BASE}${product.imageUrl}`)} alt={product.name} />
                 ) : (
                   <div className="no-image">No Image Available</div>
                 )}

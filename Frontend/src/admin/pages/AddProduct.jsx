@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./AddProduct.css";
+import API_BASE from "../../utils/api";
 
 const CATEGORIES = [
   "Grocery & Essentials",
@@ -43,7 +44,7 @@ export default function AddProduct() {
 
       const token = localStorage.getItem("adminToken");
 
-      const response = await fetch("http://localhost:3000/api/products", {
+      const response = await fetch(`${API_BASE}/api/products`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`

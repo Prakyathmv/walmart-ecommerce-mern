@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ProductList from '../components/ProductList';
 import { useCart } from '../context/CartContext';
 import './ProductDetails.css';
+import API_BASE from '../utils/api';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -17,7 +18,7 @@ const ProductDetails = () => {
         const fetchProduct = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`http://localhost:3000/api/products/${id}`);
+                const response = await fetch(`${API_BASE}/api/products/${id}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch product details');
                 }
@@ -68,7 +69,7 @@ const ProductDetails = () => {
             <div className="product-details-container">
                 <div className="product-details-image-section">
                     {product.imageUrl ? (
-                        <img src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000${product.imageUrl}`)} alt={product.name} className="product-main-image" />
+                        <img src={(product.imageUrl && product.imageUrl.startsWith('http') ? product.imageUrl : `${API_BASE}${product.imageUrl}`)} alt={product.name} className="product-main-image" />
                     ) : (
                         <div className="product-details-no-image">No Image Available</div>
                     )}

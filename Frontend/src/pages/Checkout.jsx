@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Checkout.css';
+import API_BASE from '../utils/api';
 
 const Checkout = () => {
     const { cartItems, cartTotalAmount, cartTotalItems, clearCart } = useCart();
@@ -61,7 +62,7 @@ const Checkout = () => {
                 paymentMethod: formData.paymentMethod,
             };
 
-            const response = await fetch('http://localhost:3000/api/orders', {
+            const response = await fetch(`${API_BASE}/api/orders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

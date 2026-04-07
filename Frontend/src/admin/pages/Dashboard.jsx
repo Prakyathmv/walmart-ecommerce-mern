@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import "./Dashboard.css";
+import API_BASE from "../../utils/api";
 
 export default function Dashboard({ setActivePage }) {
   const [stats, setStats] = useState({
@@ -22,9 +23,9 @@ export default function Dashboard({ setActivePage }) {
 
         
         const [prodRes, ordRes, userRes] = await Promise.all([
-          fetch("http://localhost:3000/api/products"), 
-          fetch("http://localhost:3000/api/orders", { headers }),
-          fetch("http://localhost:3000/api/auth/users", { headers }),
+          fetch(`${API_BASE}/api/products`), 
+          fetch(`${API_BASE}/api/orders`, { headers }),
+          fetch(`${API_BASE}/api/auth/users`, { headers }),
         ]);
 
         const [prodData, ordData, userData] = await Promise.all([
