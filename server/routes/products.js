@@ -130,7 +130,9 @@ router.get('/', async (req, res) => {
           brand: p.brand,
           price: p.price,
           category: p.category,
-          imageUrl: p.imageUrl
+          imageUrl: p.imageUrl,
+          stock: p.stock,
+          status: p.status,
         })),
       },
       meta: {

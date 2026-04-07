@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
 
-const MONGODB_URI = 'mongodb://127.0.0.1:27017/product-db';
+const MONGODB_URI = 'mongodb+srv://walmart:walmart@cluster0.pk9fzg4.mongodb.net/?appName=Cluster0';
 const uploadsDir = path.join(__dirname, 'uploads');
 const imgSrc = path.join(__dirname, '../Frontend/src/assets/product images');
 
