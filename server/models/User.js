@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a password'],
       minlength: 6,
-      select: false, 
+      select: false,
     },
     name: {
       type: String,
@@ -55,7 +55,7 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 };
 
 
-const loginDbConnection = mongoose.createConnection(process.env.LOGIN_DB_URI || 'mongodb://127.0.0.1:27017/Login');
+const loginDbConnection = mongoose.createConnection(process.env.LOGIN_DB_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/Login');
 
 loginDbConnection.on('error', console.error.bind(console, 'Login DB connection error:'));
 loginDbConnection.once('open', () => {
