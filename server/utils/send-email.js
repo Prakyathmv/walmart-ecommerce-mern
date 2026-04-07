@@ -1,12 +1,12 @@
 const { Resend } = require('resend');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const sendEmail = async (to, subject, html) => {
   if (!process.env.RESEND_API_KEY) {
-    console.error("Missing RESEND_API_KEY in .env");
+    console.error("Missing RESEND_API_KEY in environment");
     throw new Error("Email configuration error");
   }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const data = await resend.emails.send({
