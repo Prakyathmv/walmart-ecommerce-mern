@@ -25,9 +25,12 @@ function buildInvoice(order, res) {
     .fillColor('#333333')
     .text('OFFICIAL RECEIPT', 50, 110)
     .fontSize(10)
-    .text(`Order ID: ${order._id}`, 50, 140)
-    .text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 50, 155)
-    .text(`Payment Method: ${order.paymentMethod}`, 50, 170)
+    .font('Helvetica-Bold')
+    .text(`Invoice #: INV-2026-${order._id.toString().substring(0, 6).toUpperCase()}`, 50, 140)
+    .font('Helvetica')
+    .text(`Order ID: ${order._id}`, 50, 155)
+    .text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 50, 170)
+    .text(`Payment Method: ${order.paymentMethod}`, 50, 185)
 
     .text('Billed To:', 300, 140)
     .font('Helvetica-Bold')
@@ -69,14 +72,25 @@ function buildInvoice(order, res) {
     );
   }
 
-  // 5. Calculate Subtotals (Assume 0 tax/shipping for clone logic)
-  const subtotalPosition = invoiceTableTop + (i + 1) * 30 + 20;
+  // 5. Calculate Subtotals & Realistic State Tax
+  const subtotalPosition = invoiceTableTop + (i + 1) * 30 + 15;
+  const subtotal = order.totalPrice;
+  const tax = subtotal * 0.0825; // Standard 8.25% Sales Tax
+  const grandTotal = subtotal + tax;
 
   doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, subtotalPosition - 10).lineTo(550, subtotalPosition - 10).stroke();
-  doc.font('Helvetica-Bold');
-  generateTableRow(doc, subtotalPosition, '', '', 'Grand Total:', `$${order.totalPrice.toFixed(2)}`);
 
-  // 6. Draw Footer
+  doc.font('Helvetica');
+  generateTableRow(doc, subtotalPosition, '', '', 'Subtotal:', `$${subtotal.toFixed(2)}`);
+  generateTableRow(doc, subtotalPosition + 20, '', '', 'Sales Tax (8.25%):', `$${tax.toFixed(2)}`);
+  generateTableRow(doc, subtotalPosition + 40, '', '', 'Shipping:', `FREE`);
+
+  doc.font('Helvetica-Bold').fontSize(12);
+  generateTableRow(doc, subtotalPosition + 65, '', '', 'Grand Total:', `$${grandTotal.toFixed(2)}`);
+  doc.fontSize(10); // reset
+
+  // 6. Draw Footer & Fake Barcode Identifier
+  const invoiceNumber = `INV-2026-${order._id.toString().substring(0, 6).toUpperCase()}`;
   doc
     .font('Helvetica')
     .fontSize(10)
