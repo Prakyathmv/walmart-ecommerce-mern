@@ -79,7 +79,7 @@ router.post('/', protect, async (req, res) => {
             </tr>`).join('');
 
           await resend.emails.send({
-            from: 'orders@yourdomain.com',
+            from: 'Walmart Clone <onboarding@resend.dev>',
             to: user.email,
             subject: `Order Confirmed! #${savedOrder._id.toString().slice(-6).toUpperCase()}`,
             html: `
