@@ -6,6 +6,7 @@ import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
+import Search from './pages/Search';
 import './index.css';
 import Navigation from './components/Navigation';
 import PrivateRoute from './components/PrivateRoute';
@@ -17,6 +18,7 @@ function App() {
      <Navigation />
      <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/search" element={<Search />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/product/:id" element={<ProductDetails />} />

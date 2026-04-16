@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import walmartLogo from '../assets/walmartlogo.jpeg';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -7,6 +7,17 @@ import { useCart } from '../context/CartContext';
 const Navigation = () => {
     const { isAuthenticated, user, logout } = useAuth();
     const { cartTotalItems, cartTotalAmount } = useCart();
+    
+    const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
+
     return (
         <header>
             <div className="top">
@@ -23,10 +34,15 @@ const Navigation = () => {
                             <i className="fa-solid fa-chevron-down"></i>
                         </div>
                     </div>
-                    <div className="search-bar">
-                        <input type="text" placeholder="Search everything at Walmart online and in store" />
-                        <button><i className="fa-solid fa-magnifying-glass"></i></button>
-                    </div>
+                    <form className="search-bar" onSubmit={handleSearch}>
+                        <input 
+                            type="text" 
+                            placeholder="Search everything at Walmart online and in store" 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <button type="submit"><i className="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
                     <div className="right">
                         <div className="nav-item">
                             <i className="fa-regular fa-heart"></i>
