@@ -72,6 +72,7 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
 
 app.use('/api/payments', require('./routes/payments'));
+app.use('/api/feedback', require('./routes/feedback'));
 
 
 app.use((err, req, res, next) => {

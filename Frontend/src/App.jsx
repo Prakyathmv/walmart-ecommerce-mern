@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -11,11 +12,25 @@ import './index.css';
 import Navigation from './components/Navigation';
 import PrivateRoute from './components/PrivateRoute';
 import Footer from './components/Footer';
+import AdminDashboard from './pages/AdminDashboard';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import FeedbackModal from './components/FeedbackModal';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51TMjUb2KP1zpShwRY2rUc6fXbraA3xKyF0hSd1B53OYHmKofJwV8VFGrAxy1ZfFdp9XUnfGRM5arTHwWJgwBWtA400e5idsPjG');
 
 function App() {
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+
   return (
-    <>
+    <Elements stripe={stripePromise}>
      <Navigation />
+     
+     <button className="global-feedback-tab" onClick={() => setIsFeedbackOpen(true)}>
+       Feedback
+     </button>
+     <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+
      <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/search" element={<Search />} />
@@ -33,10 +48,10 @@ function App() {
         </PrivateRoute>
       } />
       <Route path="/order-confirmation" element={<OrderConfirmation />} />
+      <Route path="/admin" element={<PrivateRoute adminOnly={true}><AdminDashboard /></PrivateRoute>} />
     </Routes>
     <Footer />
-    </>
-    
+    </Elements>
   );
 }
 
