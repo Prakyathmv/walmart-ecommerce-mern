@@ -62,6 +62,34 @@ const Checkout = () => {
                 paymentMethod: formData.paymentMethod,
             };
 
+            if (formData.paymentMethod === 'Online') {
+                const stripeResponse = await fetch(`${API_BASE}/api/payments/create-checkout-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ items: cartItems })
+                });
+
+                const stripeData = await stripeResponse.json();
+                
+                if (stripeResponse.status === 401) {
+                    alert('Session expired, please login again');
+                    logout();
+                    navigate('/login');
+                    return;
+                }
+
+                if (stripeData.success && stripeData.url) {
+                    localStorage.setItem('pendingStripeOrder', JSON.stringify(orderPayload));
+                    window.location.href = stripeData.url;
+                    return;
+                } else {
+                    throw new Error(stripeData.error?.message || 'Failed to initialize Stripe checkout');
+                }
+            }
+
             const response = await fetch(`${API_BASE}/api/orders`, {
                 method: 'POST',
                 headers: {

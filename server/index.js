@@ -28,7 +28,7 @@ const path = require('path');
 
 
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" } 
+  crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ limit: '10kb', extended: true }));
@@ -43,8 +43,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 10000, 
+  windowMs: 15 * 60 * 1000,
+  max: 10000,
   message: 'Too many requests from this IP, please try again later.',
 });
 app.use('/api/', limiter);
@@ -70,6 +70,8 @@ app.use('/api/products', require('./routes/products'));
 
 
 app.use('/api/orders', require('./routes/orders'));
+
+app.use('/api/payments', require('./routes/payments'));
 
 
 app.use((err, req, res, next) => {
@@ -106,7 +108,7 @@ mongoose.connect(MONGODB_URI, {
 })
   .then(() => {
     logger.info('✓ Connected to MongoDB');
-    
+
     app.listen(PORT, () => {
       logger.info(`✓ Server running on http://localhost:${PORT}`);
       logger.info(`✓ Health check: GET http://localhost:${PORT}/health`);
