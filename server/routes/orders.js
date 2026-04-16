@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { buildInvoice } = require('../utils/generatePdf');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const User = require('../models/User');
@@ -203,6 +204,34 @@ router.delete('/:id', async (req, res) => {
     res.status(200).json({ success: true, message: 'Order deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, error: { message: 'Error deleting order' } });
+  }
+});
+
+// @desc    Download Order Invoice PDF
+// @route   GET /api/orders/:id/invoice
+// @access  Private
+router.get('/:id/invoice', protect, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ success: false, error: { message: 'Order not found' } });
+    }
+
+    // Optional Check: Make sure standard users only download their own orders
+    if (order.userId && order.userId.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, error: { message: 'Unauthorized to download this invoice' } });
+    }
+
+    // Tell the browser this response is a physical PDF file
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="Walmart-Invoice-${order._id}.pdf"`);
+
+    // Stream the binary straight to the network card
+    buildInvoice(order, res);
+
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).json({ success: false, error: { message: 'Server error generating PDF' } });
   }
 });
 

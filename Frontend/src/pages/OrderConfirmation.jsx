@@ -62,6 +62,41 @@ const OrderConfirmation = () => {
         );
     }
 
+    const handleDownloadInvoice = async () => {
+        if (!orderId) return;
+        try {
+            const response = await fetch(`${API_BASE}/api/orders/${orderId}/invoice`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate invoice');
+            }
+
+            // Stream the blob bytes to browser memory
+            const blob = await response.blob();
+            
+            // Create a fake hidden link to trigger the system download UI
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = `Walmart_Invoice_${orderId}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            
+            // Clean up browser RAM
+            window.URL.revokeObjectURL(downloadUrl);
+
+        } catch (error) {
+            console.error('Error downloading invoice:', error);
+            alert('Sorry, there was an issue downloading your receipt.');
+        }
+    };
+
     return (
         <div className="order-confirmation-container">
             <div className="confirmation-card">
@@ -78,6 +113,12 @@ const OrderConfirmation = () => {
                 </div>
                 
                 <div className="confirmation-actions">
+                    {orderId && (
+                        <button onClick={handleDownloadInvoice} style={{ background: '#2ea11b', color: 'white', padding: '10px 20px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold', marginRight: '10px' }}>
+                            <i className="fa-solid fa-file-pdf" style={{ marginRight: '8px' }}></i>
+                            Download Official Receipt
+                        </button>
+                    )}
                     <Link to="/" className="btn-primary">Continue Shopping</Link>
                 </div>
             </div>
