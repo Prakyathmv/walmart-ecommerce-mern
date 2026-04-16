@@ -22,9 +22,6 @@ function App() {
     <>
      <Navigation />
      
-     <button className="global-feedback-tab" onClick={() => setIsFeedbackOpen(true)}>
-       Feedback
-     </button>
      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
      <Routes>
@@ -42,7 +39,7 @@ function App() {
       <Route path="/order-confirmation" element={<OrderConfirmation />} />
       <Route path="/admin" element={<PrivateRoute adminOnly={true}><AdminDashboard /></PrivateRoute>} />
      </Routes>
-     <Footer />
+     <Footer onOpenFeedback={() => setIsFeedbackOpen(true)} />
     </>
   );
 }

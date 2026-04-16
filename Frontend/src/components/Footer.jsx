@@ -1,13 +1,13 @@
 import React from 'react';
 import './Footer.css';
 
-const Footer = () => {
+const Footer = ({ onOpenFeedback }) => {
   return (
     <footer className="walmart-footer">
       {}
       <div className="footer-feedback-section">
         <p>We'd love to hear what you think!</p>
-        <button className="feedback-btn">Give feedback</button>
+        <button className="feedback-btn" onClick={onOpenFeedback}>Give feedback</button>
       </div>
 
       {}
