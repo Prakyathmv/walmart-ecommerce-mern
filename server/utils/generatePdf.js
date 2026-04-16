@@ -1,113 +1,228 @@
 const PDFDocument = require('pdfkit');
 
 function buildInvoice(order, res) {
-  const doc = new PDFDocument({ margin: 50 });
+  const doc = new PDFDocument({ margin: 40 });
 
-  // Stream the output directly back to the Express response
   doc.pipe(res);
 
-  // 1. Draw Company Header
+  /* =========================
+     COLORS & CONSTANTS
+  ========================= */
+  const primary = '#0071ce';
+  const textColor = '#333';
+  const lightGray = '#f5f6f7';
+
+  let currentY = 40;
+
+  /* =========================
+     HEADER
+  ========================= */
   doc
-    .fillColor('#0071ce')
-    .fontSize(28)
-    .text('WALMART CLONE', 50, 45)
-    .fillColor('#333333')
-    .fontSize(10)
-    .text('123 Retail Ave', 200, 50, { align: 'right' })
-    .text('Bentonville, AR 72716', 200, 65, { align: 'right' })
-    .moveDown();
+    .fillColor(primary)
+    .fontSize(26)
+    .font('Helvetica-Bold')
+    .text('WALMART CLONE', 40, currentY);
 
-  doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, 90).lineTo(550, 90).stroke();
-
-  // 2. Draw Customer Details
   doc
-    .fontSize(20)
-    .fillColor('#333333')
-    .text('OFFICIAL RECEIPT', 50, 110)
+    .fillColor(textColor)
     .fontSize(10)
-    .font('Helvetica-Bold')
-    .text(`Invoice #: INV-2026-${order._id.toString().substring(0, 6).toUpperCase()}`, 50, 140)
     .font('Helvetica')
-    .text(`Order ID: ${order._id}`, 50, 155)
-    .text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 50, 170)
-    .text(`Payment Method: ${order.paymentMethod}`, 50, 185)
+    .text('123 Retail Ave', 400, currentY)
+    .text('Bentonville, AR 72716', 400, currentY + 12);
 
-    .text('Billed To:', 300, 140)
+  currentY += 40;
+
+  doc.moveTo(40, currentY).lineTo(555, currentY).stroke('#ccc');
+
+  /* =========================
+     TITLE
+  ========================= */
+  currentY += 15;
+
+  doc
+    .fontSize(18)
     .font('Helvetica-Bold')
-    .text(order.shippingAddress.fullName, 300, 155)
+    .fillColor(textColor)
+    .text('OFFICIAL RECEIPT', 40, currentY);
+
+  currentY += 25;
+
+  /* =========================
+     LEFT: ORDER DETAILS
+  ========================= */
+  doc.fontSize(10).font('Helvetica');
+
+  const leftX = 40;
+  let leftY = currentY;
+
+  const invoiceNo = `INV-2026-${order._id.toString().substring(0, 6).toUpperCase()}`;
+
+  drawKeyValue(doc, leftX, leftY, 'Invoice #:', invoiceNo);
+  leftY += 15;
+  drawKeyValue(doc, leftX, leftY, 'Order ID:', order._id);
+  leftY += 15;
+  drawKeyValue(doc, leftX, leftY, 'Date:', new Date(order.createdAt).toLocaleDateString());
+  leftY += 15;
+  drawKeyValue(doc, leftX, leftY, 'Payment:', order.paymentMethod);
+  leftY += 15;
+  drawKeyValue(doc, leftX, leftY, 'Status:', 'Pending');
+
+  /* =========================
+     RIGHT: SHIPPING DETAILS
+  ========================= */
+  const rightX = 300;
+  let rightY = currentY;
+
+  drawKeyValue(doc, rightX, rightY, 'Shipping:', 'Standard Delivery');
+  rightY += 15;
+  drawKeyValue(doc, rightX, rightY, 'Estimated:', '3–5 Days');
+  rightY += 15;
+  drawKeyValue(doc, rightX, rightY, 'Shipping Cost:', 'Free');
+  rightY += 15;
+
+  rightY += 5;
+
+  drawKeyValue(doc, rightX, rightY, 'GSTIN:', '29AAACDE12234F1XZ');
+  rightY += 15;
+  drawKeyValue(doc, rightX, rightY, 'Support:', 'support@walmartclone.com');
+  rightY += 15;
+  drawKeyValue(doc, rightX, rightY, 'Phone:', '+1 800-123-4567');
+
+  /* =========================
+     BILLING ADDRESS
+  ========================= */
+  currentY = Math.max(leftY, rightY) + 20;
+
+  doc.moveTo(40, currentY).lineTo(555, currentY).stroke('#ccc');
+
+  currentY += 10;
+
+  doc.font('Helvetica-Bold').text('Billed To:', 40, currentY);
+
+  currentY += 15;
+
+  doc
     .font('Helvetica')
-    .text(order.shippingAddress.addressLine, 300, 170)
-    .text(`${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zipCode}`, 300, 185);
+    .text(order.shippingAddress.fullName, 40, currentY)
+    .text(order.shippingAddress.addressLine, 40, currentY + 12)
+    .text(
+      `${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zipCode}`,
+      40,
+      currentY + 24
+    );
 
-  doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, 210).lineTo(550, 210).stroke();
+  currentY += 50;
 
-  // 3. Draw Item Table Headers
-  let invoiceTableTop = 240;
+  /* =========================
+     TABLE HEADER
+  ========================= */
+  const tableTop = currentY;
 
-  doc.font('Helvetica-Bold');
-  generateTableRow(
-    doc,
-    invoiceTableTop,
-    'Item Description',
-    'Qty',
-    'Unit Price',
-    'Line Total'
-  );
+  doc
+    .rect(40, tableTop, 515, 20)
+    .fill(lightGray)
+    .fillColor('#000')
+    .font('Helvetica-Bold');
 
-  doc.strokeColor('#dddddd').lineWidth(1).moveTo(50, invoiceTableTop + 20).lineTo(550, invoiceTableTop + 20).stroke();
+  tableRow(doc, tableTop + 5, 'Item', 'Qty', 'Price', 'Total');
+
+  currentY = tableTop + 25;
+
+  /* =========================
+     TABLE ROWS
+  ========================= */
   doc.font('Helvetica');
 
-  // 4. Draw Rows dynamically
-  let i = 0;
-  for (i = 0; i < order.items.length; i++) {
-    const item = order.items[i];
-    const position = invoiceTableTop + (i + 1) * 30;
-    generateTableRow(
+  order.items.forEach((item, i) => {
+    if (i % 2 === 0) {
+      doc.rect(40, currentY - 5, 515, 20).fill('#fafafa').fillColor('#000');
+    }
+
+    tableRow(
       doc,
-      position,
-      item.name.substring(0, 45) + (item.name.length > 45 ? '...' : ''),
-      item.quantity.toString(),
+      currentY,
+      item.name.substring(0, 40),
+      item.quantity,
       `$${item.price.toFixed(2)}`,
       `$${(item.price * item.quantity).toFixed(2)}`
     );
-  }
 
-  // 5. Calculate Subtotals & Realistic State Tax
-  const subtotalPosition = invoiceTableTop + (i + 1) * 30 + 15;
+    currentY += 20;
+  });
+
+  /* =========================
+     TOTAL SECTION
+  ========================= */
+  currentY += 10;
+
+  doc.moveTo(40, currentY).lineTo(555, currentY).stroke('#ccc');
+
+  currentY += 10;
+
   const subtotal = order.totalPrice;
-  const tax = subtotal * 0.0825; // Standard 8.25% Sales Tax
-  const grandTotal = subtotal + tax;
+  const tax = subtotal * 0.0825;
+  const total = subtotal + tax;
 
-  doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, subtotalPosition - 10).lineTo(550, subtotalPosition - 10).stroke();
+  summaryRow(doc, currentY, 'Subtotal:', subtotal);
+  currentY += 15;
 
-  doc.font('Helvetica');
-  generateTableRow(doc, subtotalPosition, '', '', 'Subtotal:', `$${subtotal.toFixed(2)}`);
-  generateTableRow(doc, subtotalPosition + 20, '', '', 'Sales Tax (8.25%):', `$${tax.toFixed(2)}`);
-  generateTableRow(doc, subtotalPosition + 40, '', '', 'Shipping:', `FREE`);
+  summaryRow(doc, currentY, 'Sales Tax (8.25%):', tax);
+  currentY += 15;
 
-  doc.font('Helvetica-Bold').fontSize(12);
-  generateTableRow(doc, subtotalPosition + 65, '', '', 'Grand Total:', `$${grandTotal.toFixed(2)}`);
-  doc.fontSize(10); // reset
+  summaryRow(doc, currentY, 'Shipping:', 0);
+  currentY += 20;
 
-  // 6. Draw Footer & Fake Barcode Identifier
-  const invoiceNumber = `INV-2026-${order._id.toString().substring(0, 6).toUpperCase()}`;
+  // Highlight Grand Total
+  doc.rect(350, currentY - 5, 205, 25).fill(lightGray);
+
   doc
-    .font('Helvetica')
-    .fontSize(10)
-    .fillColor('#888888')
-    .text('Thank you for your business. For return policy inquiries, please visit Walmart Clone Support.', 50, 700, { align: 'center' });
+    .fillColor('#000')
+    .font('Helvetica-Bold')
+    .text('Grand Total:', 360, currentY)
+    .text(`$${total.toFixed(2)}`, 450, currentY, { align: 'right' });
 
-  // Finalize PDF rendering (This closes the stream, triggering browser download)
+  /* =========================
+     FOOTER
+  ========================= */
+  currentY += 50;
+
+  doc
+    .fontSize(9)
+    .fillColor('#777')
+    .text(
+      'Thank you for shopping with Walmart Clone. This is a system-generated invoice.',
+      40,
+      currentY,
+      { align: 'center', width: 515 }
+    );
+
   doc.end();
 }
 
-function generateTableRow(doc, y, item, qty, unit, total) {
+/* =========================
+   HELPERS
+========================= */
+function drawKeyValue(doc, x, y, key, value) {
+  doc.font('Helvetica-Bold').text(key, x, y);
+  doc.font('Helvetica').text(value, x + 110, y);
+}
+
+function tableRow(doc, y, item, qty, price, total) {
   doc
     .fontSize(10)
-    .text(item, 50, y, { width: 250 })
+    .text(item, 45, y, { width: 250 })
     .text(qty, 300, y, { width: 50, align: 'right' })
-    .text(unit, 400, y, { width: 70, align: 'right' })
-    .text(total, 480, y, { width: 70, align: 'right' });
+    .text(price, 380, y, { width: 70, align: 'right' })
+    .text(total, 460, y, { width: 80, align: 'right' });
+}
+
+function summaryRow(doc, y, label, value) {
+  doc
+    .font('Helvetica')
+    .text(label, 360, y)
+    .text(value === 0 ? 'FREE' : `$${value.toFixed(2)}`, 450, y, {
+      align: 'right',
+    });
 }
 
 module.exports = { buildInvoice };
