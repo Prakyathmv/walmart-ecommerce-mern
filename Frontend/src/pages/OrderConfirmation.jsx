@@ -112,14 +112,14 @@ const OrderConfirmation = () => {
                     <strong>{orderId || '# Processing'}</strong>
                 </div>
                 
-                <div className="confirmation-actions">
+                <div className="confirmation-actions" style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
                     {orderId && (
-                        <button onClick={handleDownloadInvoice} style={{ background: '#2ea11b', color: 'white', padding: '10px 20px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold', marginRight: '10px' }}>
+                        <button onClick={handleDownloadInvoice} style={{ background: '#2ea11b', color: 'white', padding: '12px 24px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold', width: '100%', maxWidth: '250px' }}>
                             <i className="fa-solid fa-file-pdf" style={{ marginRight: '8px' }}></i>
                             Download Official Receipt
                         </button>
                     )}
-                    <Link to="/" className="btn-primary">Continue Shopping</Link>
+                    <Link to="/" className="btn-primary" style={{ width: '100%', maxWidth: '250px', boxSizing: 'border-box' }}>Continue Shopping</Link>
                 </div>
             </div>
         </div>
