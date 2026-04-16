@@ -12,7 +12,7 @@ import './index.css';
 import Navigation from './components/Navigation';
 import PrivateRoute from './components/PrivateRoute';
 import Footer from './components/Footer';
-import AdminDashboard from './pages/AdminDashboard';
+import AdminDashboard from './admin/pages/AdminDashboard';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import FeedbackModal from './components/FeedbackModal';
