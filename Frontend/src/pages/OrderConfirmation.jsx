@@ -23,7 +23,7 @@ const OrderConfirmation = () => {
                 if (pendingOrderStr) {
                     try {
                         const orderPayload = JSON.parse(pendingOrderStr);
-                        orderPayload.paymentMethod = 'Online (Stripe Paid)';
+                        orderPayload.paymentMethod = 'Online';
 
                         const response = await fetch(`${API_BASE}/api/orders`, {
                             method: 'POST',
