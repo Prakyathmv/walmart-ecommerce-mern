@@ -153,13 +153,9 @@ router.post('/', protect, async (req, res) => {
 
 
 
-router.get('/myorders', async (req, res) => {
+router.get('/myorders', protect, async (req, res) => {
   try {
-    const { userId } = req.query;
-
-    if (!userId) {
-      return res.status(401).json({ success: false, error: { message: 'Not authorized' } });
-    }
+    const userId = req.user.id;
 
     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
 

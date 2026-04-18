@@ -70,6 +70,18 @@ export const CartProvider = ({ children }) => {
         setCartItems([]);
     };
 
+    // Bulk-replace cart with items from a past order (for Reorder functionality)
+    const reorderItems = (orderItems) => {
+        const newCart = orderItems.map(item => ({
+            productId: item.productId,
+            name: item.name,
+            price: item.price,
+            imageUrl: item.imageUrl,
+            quantity: item.quantity
+        }));
+        setCartItems(newCart);
+    };
+
     const value = {
         cartItems,
         cartTotalAmount,
@@ -77,7 +89,8 @@ export const CartProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         updateQuantity,
-        clearCart
+        clearCart,
+        reorderItems
     };
 
     return (

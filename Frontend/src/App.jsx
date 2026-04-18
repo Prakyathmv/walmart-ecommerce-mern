@@ -8,6 +8,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import Search from './pages/Search';
+import MyOrders from './pages/MyOrders';
 import './index.css';
 import Navigation from './components/Navigation';
 import PrivateRoute from './components/PrivateRoute';
@@ -37,6 +38,9 @@ function App() {
         </PrivateRoute>
       } />
       <Route path="/order-confirmation" element={<OrderConfirmation />} />
+      <Route path="/my-orders" element={
+        <PrivateRoute><MyOrders /></PrivateRoute>
+      } />
       <Route path="/admin" element={<PrivateRoute adminOnly={true}><AdminDashboard /></PrivateRoute>} />
      </Routes>
      <Footer onOpenFeedback={() => setIsFeedbackOpen(true)} />

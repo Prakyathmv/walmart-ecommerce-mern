@@ -44,20 +44,28 @@ const Navigation = () => {
                         <button type="submit"><i className="fa-solid fa-magnifying-glass"></i></button>
                     </form>
                     <div className="right">
-                        <div className="nav-item">
-                            <i className="fa-regular fa-heart"></i>
-                            <div>
-                                <span>Reorder</span>
-                                <p>My Items</p>
+                        <Link to="/my-orders" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <div className="nav-item">
+                                <i className="fa-regular fa-heart"></i>
+                                <div>
+                                    <span>Reorder</span>
+                                    <p>My Items</p>
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                         <div className="nav-item">
                             <i className="fa-regular fa-user"></i>
                             <div>
                                 {isAuthenticated ? (
-                                    <div style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }} onClick={logout}>
-                                        <span>Hi {user?.name ? user.name.split(' ')[0] : ''}</span>
-                                        <p style={{ margin: 0, fontWeight: 'bold' }}>Sign Out</p>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        <Link to="/my-orders" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            <span>Hi {user?.name ? user.name.split(' ')[0] : ''}</span>
+                                            <p style={{ margin: 0, fontWeight: 600, fontSize: '0.8rem', color: '#0071ce' }}>My Orders</p>
+                                        </Link>
+                                        <p
+                                            style={{ margin: 0, fontWeight: 'bold', cursor: 'pointer', fontSize: '0.75rem' }}
+                                            onClick={logout}
+                                        >Sign Out</p>
                                     </div>
                                 ) : (
                                     <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
