@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiShoppingBag } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import API_BASE from '../utils/api';
+import axiosInstance from '../utils/axiosConfig';
 import './MyOrders.css';
 
 const ORDERS_PER_PAGE = 5;
@@ -121,7 +121,7 @@ const OrderCard = ({ order, onReorder, onInvoice, invoiceLoading }) => {
 
 // ─── Main Page ───────────────────────────────────────────
 const MyOrders = () => {
-  const { token } = useAuth();
+  const { user } = useAuth();
   const { reorderItems } = useCart();
   const navigate = useNavigate();
 
@@ -143,23 +143,20 @@ const MyOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/orders/myorders`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (data.success) {
-          setOrders(data.data.orders);
+        const res = await axiosInstance.get('/api/orders/myorders');
+        if (res.data.success) {
+          setOrders(res.data.data.orders);
         } else {
-          setError(data.error?.message || 'Failed to load orders.');
+          setError(res.data.error?.message || 'Failed to load orders.');
         }
-      } catch {
-        setError('Network error — please try again.');
+      } catch (err) {
+        setError(err.response?.data?.error?.message || 'Failed to load orders. Please try again.');
       } finally {
         setLoading(false);
       }
     };
     fetchOrders();
-  }, [token]);
+  }, []);
 
   // ── Client-side search
   const filtered = orders.filter((o) => {
@@ -188,17 +185,14 @@ const MyOrders = () => {
   const handleInvoice = async (orderId) => {
     setInvoiceLoading(orderId);
     try {
-      const res = await fetch(`${API_BASE}/api/orders/${orderId}/invoice`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.success) {
+      const res = await axiosInstance.get(`/api/orders/${orderId}/invoice`);
+      if (res.data.success) {
         showToast('Invoice sent to your email! 📧');
       } else {
-        showToast(data.error?.message || 'Failed to send invoice.', 'error');
+        showToast(res.data.error?.message || 'Failed to send invoice.', 'error');
       }
-    } catch {
-      showToast('Network error — could not send invoice.', 'error');
+    } catch (err) {
+      showToast(err.response?.data?.error?.message || 'Network error — could not send invoice.', 'error');
     } finally {
       setInvoiceLoading(null);
     }
