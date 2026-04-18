@@ -207,7 +207,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// @desc    Download Order Invoice PDF
+// @desc    Email Order Invoice PDF as Attachment
 // @route   GET /api/orders/:id/invoice
 // @access  Private
 router.get('/:id/invoice', protect, async (req, res) => {
@@ -217,21 +217,44 @@ router.get('/:id/invoice', protect, async (req, res) => {
       return res.status(404).json({ success: false, error: { message: 'Order not found' } });
     }
 
-    // Optional Check: Make sure standard users only download their own orders
+    // Make sure standard users can only request their own invoices
     if (order.userId && order.userId.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ success: false, error: { message: 'Unauthorized to download this invoice' } });
+      return res.status(403).json({ success: false, error: { message: 'Unauthorized to access this invoice' } });
     }
 
-    // Tell the browser this response is a physical PDF file
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="Walmart-Invoice-${order._id}.pdf"`);
+    const user = await User.findById(req.user.id).select('email name');
+    if (!user || !user.email) {
+      return res.status(404).json({ success: false, error: { message: 'User email not found' } });
+    }
 
-    // Stream the binary straight to the network card
-    buildInvoice(order, res);
+    // Generate the PDF as a Buffer
+    const pdfBuffer = await buildInvoice(order);
+
+    // Send the PDF buffer as an email attachment
+    const { sendEmail } = require('../utils/send-email');
+    const invoiceNo = `INV-2026-${order._id.toString().substring(0, 6).toUpperCase()}`;
+    await sendEmail(
+      user.email,
+      `Your Walmart Clone Receipt - ${invoiceNo}`,
+      `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+        <h2 style="color:#0071ce;">🧾 Your Invoice is Attached!</h2>
+        <p>Hi <strong>${user.name || 'Valued Customer'}</strong>,</p>
+        <p>Please find your official receipt for order <strong>#${order._id.toString().slice(-6).toUpperCase()}</strong> attached to this email.</p>
+        <p style="color:#555;">Thank you for shopping with Walmart Clone!</p>
+      </div>`,
+      [
+        {
+          filename: `Walmart-Invoice-${invoiceNo}.pdf`,
+          content: pdfBuffer,
+        }
+      ]
+    );
+
+    res.status(200).json({ success: true, message: 'Invoice sent to your email successfully!' });
 
   } catch (error) {
-    console.error('Error generating PDF:', error);
-    res.status(500).json({ success: false, error: { message: 'Server error generating PDF' } });
+    console.error('Error emailing PDF invoice:', error);
+    res.status(500).json({ success: false, error: { message: 'Server error emailing invoice' } });
   }
 });
 

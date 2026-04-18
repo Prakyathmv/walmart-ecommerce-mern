@@ -62,7 +62,7 @@ const OrderConfirmation = () => {
         );
     }
 
-    const handleDownloadInvoice = async () => {
+    const handleEmailInvoice = async () => {
         if (!orderId) return;
         try {
             const response = await fetch(`${API_BASE}/api/orders/${orderId}/invoice`, {
@@ -72,28 +72,17 @@ const OrderConfirmation = () => {
                 }
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to generate invoice');
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error?.message || 'Failed to send invoice');
             }
 
-            // Stream the blob bytes to browser memory
-            const blob = await response.blob();
-            
-            // Create a fake hidden link to trigger the system download UI
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = `Walmart_Invoice_${orderId}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            
-            // Clean up browser RAM
-            window.URL.revokeObjectURL(downloadUrl);
+            alert('✅ Receipt sent to your email successfully!');
 
         } catch (error) {
-            console.error('Error downloading invoice:', error);
-            alert('Sorry, there was an issue downloading your receipt.');
+            console.error('Error emailing invoice:', error);
+            alert('Sorry, there was an issue sending your receipt. Please try again.');
         }
     };
 
@@ -114,9 +103,9 @@ const OrderConfirmation = () => {
                 
                 <div className="confirmation-actions" style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
                     {orderId && (
-                        <button onClick={handleDownloadInvoice} style={{ background: '#2ea11b', color: 'white', padding: '12px 24px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold', width: '100%', maxWidth: '300px' }}>
-                            <i className="fa-solid fa-file-pdf" style={{ marginRight: '8px' }}></i>
-                            Download Official Receipt
+                        <button onClick={handleEmailInvoice} style={{ background: '#2ea11b', color: 'white', padding: '12px 24px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold', width: '100%', maxWidth: '300px' }}>
+                            <i className="fa-solid fa-envelope" style={{ marginRight: '8px' }}></i>
+                            Email Official Receipt
                         </button>
                     )}
                     <Link to="/" className="btn-primary" style={{ width: '100%', maxWidth: '300px', boxSizing: 'border-box' }}>Continue Shopping</Link>
