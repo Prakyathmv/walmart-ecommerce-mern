@@ -57,13 +57,12 @@ const Navigation = () => {
                             <i className="fa-regular fa-user"></i>
                             <div>
                                 {isAuthenticated ? (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
                                         <Link to="/my-orders" style={{ textDecoration: 'none', color: 'inherit' }}>
                                             <span>Hi {user?.name ? user.name.split(' ')[0] : ''}</span>
-                                            <p style={{ margin: 0, fontWeight: 600, fontSize: '0.8rem', color: '#0071ce' }}>My Orders</p>
                                         </Link>
                                         <p
-                                            style={{ margin: 0, fontWeight: 'bold', cursor: 'pointer', fontSize: '0.75rem' }}
+                                            style={{ margin: 0, fontWeight: 'bold', cursor: 'pointer' }}
                                             onClick={logout}
                                         >Sign Out</p>
                                     </div>
