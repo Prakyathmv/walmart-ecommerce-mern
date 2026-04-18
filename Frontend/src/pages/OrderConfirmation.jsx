@@ -62,30 +62,6 @@ const OrderConfirmation = () => {
         );
     }
 
-    const handleEmailInvoice = async () => {
-        if (!orderId) return;
-        try {
-            const response = await fetch(`${API_BASE}/api/orders/${orderId}/invoice`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.success) {
-                throw new Error(data.error?.message || 'Failed to send invoice');
-            }
-
-            alert('✅ Receipt sent to your email successfully!');
-
-        } catch (error) {
-            console.error('Error emailing invoice:', error);
-            alert('Sorry, there was an issue sending your receipt. Please try again.');
-        }
-    };
-
     return (
         <div className="order-confirmation-container">
             <div className="confirmation-card">
@@ -95,6 +71,7 @@ const OrderConfirmation = () => {
                 <h1>Order Placed Successfully!</h1>
                 <p className="confirmation-message">
                     Thank you for shopping with us. Your order has been securely placed and is now being processed.
+                    A confirmation email with your official receipt has been sent to your registered email address.
                 </p>
                 <div className="order-details-box">
                     <span>Order ID:</span>
@@ -102,12 +79,6 @@ const OrderConfirmation = () => {
                 </div>
                 
                 <div className="confirmation-actions" style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
-                    {orderId && (
-                        <button onClick={handleEmailInvoice} style={{ background: '#2ea11b', color: 'white', padding: '12px 24px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold', width: '100%', maxWidth: '300px' }}>
-                            <i className="fa-solid fa-envelope" style={{ marginRight: '8px' }}></i>
-                            Email Official Receipt
-                        </button>
-                    )}
                     <Link to="/" className="btn-primary" style={{ width: '100%', maxWidth: '300px', boxSizing: 'border-box' }}>Continue Shopping</Link>
                 </div>
             </div>

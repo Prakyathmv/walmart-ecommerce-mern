@@ -64,7 +64,7 @@ router.post('/', protect, async (req, res) => {
 
     const savedOrder = await order.save();
 
-    // --- Send Order Confirmation Email via Resend ---
+    // --- Send Order Confirmation Email with PDF Invoice via Resend ---
     try {
       if (!process.env.RESEND_API_KEY) {
         console.warn('RESEND_API_KEY missing, skipping order confirmation email');
@@ -78,6 +78,10 @@ router.post('/', protect, async (req, res) => {
               <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
               <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">$${(item.price * item.quantity).toFixed(2)}</td>
             </tr>`).join('');
+
+          // Generate PDF invoice as a Buffer
+          const invoiceNo = `INV-2026-${savedOrder._id.toString().substring(0, 6).toUpperCase()}`;
+          const pdfBuffer = await buildInvoice(savedOrder);
 
           await resend.emails.send({
             from: 'Walmart Clone <onboarding@resend.dev>',
@@ -109,9 +113,16 @@ router.post('/', protect, async (req, res) => {
                 <strong>Shipping to:</strong><br/>
                 ${shippingAddress.street || ''}, ${shippingAddress.city || ''}, ${shippingAddress.zip || ''}
               </p>
+              <p style="color:#555;font-size:13px;">🧾 Your official receipt is attached to this email.</p>
               <p style="color:#999;font-size:12px;">Order ID: ${savedOrder._id}</p>
             </div>
-          `
+          `,
+            attachments: [
+              {
+                filename: `Walmart-Invoice-${invoiceNo}.pdf`,
+                content: pdfBuffer,
+              }
+            ]
           });
         }
       }
