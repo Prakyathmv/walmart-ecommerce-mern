@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { saveAuthToken, removeAuthToken } from '../utils/auth';
 
 const AuthContext = createContext();
 
@@ -19,9 +20,17 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (user) localStorage.setItem('user', JSON.stringify(user));
         else localStorage.removeItem('user');
-        
-        if (token) localStorage.setItem('token', token);
-        else localStorage.removeItem('token');
+
+        // Keep BOTH token keys in sync:
+        // 'token' → read by AuthContext itself
+        // 'authToken' → read by axiosConfig interceptor via getAuthToken()
+        if (token) {
+            localStorage.setItem('token', token);
+            saveAuthToken(token);
+        } else {
+            localStorage.removeItem('token');
+            removeAuthToken();
+        }
     }, [user, token]);
 
     const login = (userData, userToken) => {
