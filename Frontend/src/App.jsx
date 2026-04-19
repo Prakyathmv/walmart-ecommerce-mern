@@ -9,6 +9,7 @@ import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import Search from './pages/Search';
 import MyOrders from './pages/MyOrders';
+import DepartmentPage from './pages/DepartmentPage';
 import './index.css';
 import Navigation from './components/Navigation';
 import PrivateRoute from './components/PrivateRoute';
@@ -28,6 +29,7 @@ function App() {
      <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/search" element={<Search />} />
+      <Route path="/department/:departmentName" element={<DepartmentPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/product/:id" element={<ProductDetails />} />

@@ -4,6 +4,8 @@ import walmartLogo from '../assets/walmartlogo.jpeg';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
+import DepartmentsDropdown from './DepartmentsDropdown';
+
 const Navigation = () => {
     const { isAuthenticated, user, logout } = useAuth();
     const { cartTotalItems, cartTotalAmount } = useCart();
@@ -88,7 +90,7 @@ const Navigation = () => {
             </div>
             <div className="bottom-navbar">
               <div className="container bottom-navbar-inner">
-                <span>Departments <i className="fa-solid fa-chevron-down"></i></span>
+                <DepartmentsDropdown />
                 <span>Services <i className="fa-solid fa-chevron-down"></i></span>
                 <span>Get it Fast</span>
                 <span>Rollbacks & More</span>

@@ -51,7 +51,7 @@ router.post('/', protect, upload.single('image'), validateProduct, async (req, r
   }
 
   try {
-    const { name, brand, price, category, stock, status } = req.body;
+    const { name, brand, price, category, department, stock, status } = req.body;
     let imageUrl = '';
 
     if (req.file) {
@@ -63,6 +63,7 @@ router.post('/', protect, upload.single('image'), validateProduct, async (req, r
       brand,
       price,
       category,
+      department,
       imageUrl,
       stock,
       status,
@@ -79,6 +80,7 @@ router.post('/', protect, upload.single('image'), validateProduct, async (req, r
           brand: product.brand,
           price: product.price,
           category: product.category,
+          department: product.department,
           imageUrl: product.imageUrl
         },
       },
@@ -95,29 +97,36 @@ router.post('/', protect, upload.single('image'), validateProduct, async (req, r
 });
 
 
+// GET /api/products/departments — distinct department list
+router.get('/departments', async (req, res) => {
+  try {
+    const departments = await Product.distinct('department', { department: { $ne: null, $ne: '' } });
+    res.status(200).json({ success: true, data: { departments } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Error fetching departments' } });
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, category, q, minPrice, maxPrice, sort = '-createdAt' } = req.query;
-
+    const { page = 1, limit = 10, category, department, q, minPrice, maxPrice, sort = '-createdAt' } = req.query;
 
     const filter = {};
     if (category) filter.category = category;
+    if (department) filter.department = { $regex: new RegExp(`^${department}$`, 'i') };
     if (q) filter.name = { $regex: q, $options: 'i' };
     if (minPrice) filter.price = { ...filter.price, $gte: parseFloat(minPrice) };
     if (maxPrice) filter.price = { ...filter.price, $lte: parseFloat(maxPrice) };
 
-
     const pageNum = Math.max(1, parseInt(page));
     const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
     const skip = (pageNum - 1) * limitNum;
-
 
     const products = await Product.find(filter)
       .sort(sort)
       .skip(skip)
       .limit(limitNum)
       .lean();
-
 
     const total = await Product.countDocuments(filter);
 
@@ -130,6 +139,7 @@ router.get('/', async (req, res) => {
           brand: p.brand,
           price: p.price,
           category: p.category,
+          department: p.department,
           imageUrl: p.imageUrl,
           stock: p.stock,
           status: p.status,

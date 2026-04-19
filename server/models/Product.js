@@ -19,7 +19,12 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       trim: true,
-      index: true, 
+      index: true,
+    },
+    department: {
+      type: String,
+      trim: true,
+      index: true,
     },
     imageUrl: {
       type: String,

@@ -1,0 +1,95 @@
+.departments-container {
+  position: relative;
+  user-select: none;
+}
+
+.departments-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f2f2f2;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.departments-trigger:hover,
+.departments-trigger.active {
+  background: #0071dc;
+  color: white;
+}
+
+.departments-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  background: white;
+  min-width: 250px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  padding: 10px 0;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.departments-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.department-item {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.department-item:hover {
+  background: #f2f8ff;
+  color: #0071dc;
+}
+
+.department-item i {
+  font-size: 10px;
+  color: #999;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.department-item:hover i {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .departments-menu {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
