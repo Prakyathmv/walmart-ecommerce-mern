@@ -319,4 +319,4 @@ This project demonstrates end-to-end full-stack engineering — from a responsiv
 
 ---
 
-*Created by [Prakyath M](https://github.com/Prakyathmv) — Feel free to reach out or contribute!*
+*Created by [Prakyath M](https://github.com/Prakyathmv/walmart-ecommerce-mern.git) — Feel free to reach out or contribute!*
