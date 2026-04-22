@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiSearch, FiShoppingBag } from 'react-icons/fi';
+import { FiShoppingBag } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import axiosInstance from '../utils/axiosConfig';
@@ -28,14 +28,12 @@ const statusClass = (status) => {
 };
 
 const MyOrders = () => {
-  const { user } = useAuth();
   const { reorderItems } = useCart();
   const navigate = useNavigate();
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [toast, setToast] = useState(null);
 
@@ -66,20 +64,8 @@ const MyOrders = () => {
     fetchOrders();
   }, []);
 
-  // Search
-  const filtered = orders.filter((o) => {
-    const q = search.toLowerCase();
-    if (!q) return true;
-    return (
-      o._id.toLowerCase().includes(q) ||
-      o.items.some((i) => i.name.toLowerCase().includes(q))
-    );
-  });
-
-  useEffect(() => setPage(1), [search]);
-
-  const totalPages = Math.ceil(filtered.length / ORDERS_PER_PAGE);
-  const paginated = filtered.slice(
+  const totalPages = Math.ceil(orders.length / ORDERS_PER_PAGE);
+  const paginated = orders.slice(
     (page - 1) * ORDERS_PER_PAGE,
     page * ORDERS_PER_PAGE
   );
@@ -103,18 +89,6 @@ const MyOrders = () => {
           <h1>
             My <span>Orders</span>
           </h1>
-
-          {!loading && orders.length > 0 && (
-            <div className="my-orders-search-wrap">
-              <FiSearch />
-              <input
-                type="text"
-                placeholder="Search by order ID or product…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-          )}
         </div>
 
         {/* Loading */}
@@ -124,10 +98,10 @@ const MyOrders = () => {
         {!loading && error && <div className="error-box">{error}</div>}
 
         {/* Empty */}
-        {!loading && !error && filtered.length === 0 && (
+        {!loading && !error && orders.length === 0 && (
           <div className="my-orders-empty">
             <FiShoppingBag size={50} />
-            <h2>No orders found</h2>
+            <h2>No orders yet</h2>
             <Link to="/">Start Shopping</Link>
           </div>
         )}
@@ -169,9 +143,7 @@ const MyOrders = () => {
 
                       <td>
                         <span
-                          className={`status-badge ${statusClass(
-                            order.status
-                          )}`}
+                          className={`status-badge ${statusClass(order.status)}`}
                         >
                           {order.status}
                         </span>
@@ -182,7 +154,7 @@ const MyOrders = () => {
                           className="btn-reorder"
                           onClick={() => handleReorder(order.items)}
                         >
-                          🔄 Reorder
+                           Reorder
                         </button>
                       </td>
                     </tr>

@@ -1,64 +1,155 @@
-/* TABLE */
+/* ===== TABLE CONTAINER ===== */
 .orders-table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 
-.orders-table th,
-.orders-table td {
-  padding: 14px;
-  border-bottom: 1px solid #eee;
-  font-size: 0.9rem;
+/* ===== HEADER ===== */
+.orders-table thead {
+  background: #f4f6f8;
 }
 
 .orders-table th {
-  background: #f5f7fa;
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 0.85rem;
   font-weight: 700;
+  color: #1d252c;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-/* Product */
+/* ===== ROWS ===== */
+.orders-table td {
+  padding: 14px 16px;
+  font-size: 0.88rem;
+  color: #1d252c;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+/* Zebra rows (optional professional touch) */
+.orders-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* Hover effect */
+.orders-table tbody tr:hover {
+  background: #f1f7ff;
+}
+
+/* ===== PRODUCT COLUMN ===== */
 .product-cell {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  min-width: 200px;
 }
 
 .product-img {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
   border-radius: 6px;
-  border: 1px solid #eee;
+  border: 1px solid #e5e7eb;
+  background: #fff;
 }
 
-/* Status badge reuse */
+/* ===== ALIGNMENT FIXES ===== */
+.orders-table th:nth-child(4),
+.orders-table td:nth-child(4), /* Qty */
+.orders-table th:nth-child(5),
+.orders-table td:nth-child(5) { /* Price */
+  text-align: center;
+}
+
+.orders-table th:last-child,
+.orders-table td:last-child {
+  text-align: center;
+}
+
+/* ===== STATUS BADGE ===== */
 .status-badge {
-  padding: 4px 10px;
+  display: inline-block;
+  padding: 5px 12px;
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
+  text-align: center;
 }
 
-/* Toast */
-.toast {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
+/* Status colors (reuse your existing ones if already defined) */
+.status-placed {
+  background: #dbeafe;
+  color: #1d4ed8;
 }
 
-.toast.success {
+.status-delivered {
   background: #dcfce7;
   color: #15803d;
 }
 
-.toast.error {
-  background: #fee2e2;
-  color: #b91c1c;
+/* ===== REORDER BUTTON ===== */
+.btn-reorder {
+  background: #0071ce;
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reorder:hover {
+  background: #004f9a;
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 6px 14px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background: #f1f7ff;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== HEADER FIX ===== */
+.my-orders-header {
+  margin-bottom: 16px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .orders-table th,
+  .orders-table td {
+    padding: 10px;
+    font-size: 0.75rem;
+  }
+
+  .product-img {
+    width: 32px;
+    height: 32px;
+  }
 }
