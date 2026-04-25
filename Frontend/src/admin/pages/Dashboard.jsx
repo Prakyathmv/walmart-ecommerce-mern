@@ -238,10 +238,9 @@ export default function Dashboard({ setActivePage }) {
                         data={orderStatusData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={70}
                         outerRadius={100}
-                        paddingAngle={5}
                         dataKey="value"
+                        stroke="none"
                       >
                         {orderStatusData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name] || DEFAULT_COLORS[index % DEFAULT_COLORS.length]} />
