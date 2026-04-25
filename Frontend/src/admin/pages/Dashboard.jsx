@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import "./Dashboard.css";
 import API_BASE from "../../utils/api";
 
@@ -13,7 +13,17 @@ export default function Dashboard({ setActivePage }) {
   
   const [recentOrders, setRecentOrders] = useState([]);
   const [chartData, setChartData] = useState([]);
+  const [orderStatusData, setOrderStatusData] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const STATUS_COLORS = {
+    Pending: '#f59e0b',
+    Processing: '#6366f1',
+    Shipped: '#3b82f6',
+    Delivered: '#10b981',
+    Cancelled: '#ef4444'
+  };
+  const DEFAULT_COLORS = ['#8b5cf6', '#ec4899', '#f97316', '#14b8a6'];
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -42,6 +52,7 @@ export default function Dashboard({ setActivePage }) {
         
         let recentOrdersData = [];
         let chartDataArr = [];
+        let statusDataArr = [];
 
         if (prodData.success) {
           productsCount = prodData.data.products?.length || 0;
@@ -67,6 +78,7 @@ export default function Dashboard({ setActivePage }) {
              };
           }).reverse();
 
+          const statusMap = {};
           
           orders.forEach(o => {
              const dateVal = o.createdAt ? new Date(o.createdAt) : new Date();
@@ -75,8 +87,16 @@ export default function Dashboard({ setActivePage }) {
              if (dayObj) {
                 dayObj.revenue += (Number(o.totalPrice) || 0);
              }
+
+             const status = o.status || 'Pending';
+             statusMap[status] = (statusMap[status] || 0) + 1;
           });
           chartDataArr = last7Days;
+          
+          statusDataArr = Object.keys(statusMap).map(key => ({
+            name: key,
+            value: statusMap[key]
+          }));
         }
 
         if (userData.success) {
@@ -92,6 +112,7 @@ export default function Dashboard({ setActivePage }) {
         
         setRecentOrders(recentOrdersData);
         setChartData(chartDataArr);
+        setOrderStatusData(statusDataArr);
 
       } catch (err) {
         console.error("Failed to load dashboard stats", err);
@@ -154,7 +175,7 @@ export default function Dashboard({ setActivePage }) {
             </div>
           </div>
 
-          <div className="dashboard-analytics-section">
+          <div className="dashboard-charts-grid">
              <div className="chart-container">
                <h3>Revenue Trend (Last 7 Days)</h3>
                <div className="chart-wrapper">
@@ -176,6 +197,36 @@ export default function Dashboard({ setActivePage }) {
                </div>
              </div>
              
+             <div className="chart-container">
+               <h3>Order Distribution</h3>
+               <div className="chart-wrapper">
+                 <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={orderStatusData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={70}
+                        outerRadius={100}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {orderStatusData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name] || DEFAULT_COLORS[index % DEFAULT_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                        itemStyle={{ color: '#111827', fontWeight: 500 }}
+                      />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                 </ResponsiveContainer>
+               </div>
+             </div>
+          </div>
+          
+          <div className="dashboard-recent-orders-section">
              <div className="recent-orders-container">
                 <div className="recent-orders-header">
                    <h3>Recent Orders</h3>

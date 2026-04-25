@@ -77,10 +77,14 @@
 }
 
 
-.dashboard-analytics-section {
+.dashboard-charts-grid {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: 24px;
+  margin-bottom: 24px;
+}
+
+.dashboard-recent-orders-section {
   margin-bottom: 32px;
 }
 
@@ -224,7 +228,7 @@
 }
 
 @media (max-width: 1024px) {
-  .dashboard-analytics-section {
+  .dashboard-charts-grid {
     grid-template-columns: 1fr;
   }
 }
