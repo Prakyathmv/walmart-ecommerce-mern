@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import "./Dashboard.css";
 import API_BASE from "../../utils/api";
 
@@ -14,6 +14,7 @@ export default function Dashboard({ setActivePage }) {
   const [recentOrders, setRecentOrders] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [orderStatusData, setOrderStatusData] = useState([]);
+  const [topProductsData, setTopProductsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const STATUS_COLORS = {
@@ -53,6 +54,7 @@ export default function Dashboard({ setActivePage }) {
         let recentOrdersData = [];
         let chartDataArr = [];
         let statusDataArr = [];
+        let topProductsArr = [];
 
         if (prodData.success) {
           productsCount = prodData.data.products?.length || 0;
@@ -79,6 +81,7 @@ export default function Dashboard({ setActivePage }) {
           }).reverse();
 
           const statusMap = {};
+          const productSalesMap = {};
           
           orders.forEach(o => {
              const dateVal = o.createdAt ? new Date(o.createdAt) : new Date();
@@ -90,6 +93,14 @@ export default function Dashboard({ setActivePage }) {
 
              const status = o.status || 'Pending';
              statusMap[status] = (statusMap[status] || 0) + 1;
+
+             if (status !== 'Cancelled' && o.items) {
+               o.items.forEach(item => {
+                 if (item.name && item.quantity) {
+                   productSalesMap[item.name] = (productSalesMap[item.name] || 0) + Number(item.quantity);
+                 }
+               });
+             }
           });
           chartDataArr = last7Days;
           
@@ -97,6 +108,14 @@ export default function Dashboard({ setActivePage }) {
             name: key,
             value: statusMap[key]
           }));
+
+          topProductsArr = Object.keys(productSalesMap)
+            .map(name => ({
+              productName: name,
+              quantity: productSalesMap[name]
+            }))
+            .sort((a, b) => b.quantity - a.quantity)
+            .slice(0, 5);
         }
 
         if (userData.success) {
@@ -113,6 +132,7 @@ export default function Dashboard({ setActivePage }) {
         setRecentOrders(recentOrdersData);
         setChartData(chartDataArr);
         setOrderStatusData(statusDataArr);
+        setTopProductsData(topProductsArr);
 
       } catch (err) {
         console.error("Failed to load dashboard stats", err);
@@ -226,7 +246,26 @@ export default function Dashboard({ setActivePage }) {
              </div>
           </div>
           
-          <div className="dashboard-recent-orders-section">
+          <div className="dashboard-bottom-grid">
+             <div className="chart-container">
+               <h3>Top 5 Best-Selling Products</h3>
+               <div className="chart-wrapper">
+                 <ResponsiveContainer width="100%" height={300}>
+                    <BarChart layout="vertical" data={topProductsData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e7eb" />
+                      <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} />
+                      <YAxis type="category" dataKey="productName" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} width={120} tickFormatter={(value) => value.length > 18 ? value.substring(0, 18) + "..." : value} />
+                      <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} cursor={{fill: '#f3f4f6'}} />
+                      <Bar dataKey="quantity" fill="#0071dc" radius={[0, 4, 4, 0]} barSize={24}>
+                         {topProductsData.map((entry, index) => (
+                           <Cell key={`cell-${index}`} fill={['#0071dc', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'][index % 5]} />
+                         ))}
+                      </Bar>
+                    </BarChart>
+                 </ResponsiveContainer>
+               </div>
+             </div>
+
              <div className="recent-orders-container">
                 <div className="recent-orders-header">
                    <h3>Recent Orders</h3>

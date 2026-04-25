@@ -84,7 +84,10 @@
   margin-bottom: 24px;
 }
 
-.dashboard-recent-orders-section {
+.dashboard-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 24px;
   margin-bottom: 32px;
 }
 
@@ -228,7 +231,8 @@
 }
 
 @media (max-width: 1024px) {
-  .dashboard-charts-grid {
+  .dashboard-charts-grid,
+  .dashboard-bottom-grid {
     grid-template-columns: 1fr;
   }
 }
