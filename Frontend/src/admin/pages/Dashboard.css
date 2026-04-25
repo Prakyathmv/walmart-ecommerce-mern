@@ -84,10 +84,7 @@
   margin-bottom: 24px;
 }
 
-.dashboard-bottom-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 24px;
+.dashboard-recent-orders-section {
   margin-bottom: 32px;
 }
 

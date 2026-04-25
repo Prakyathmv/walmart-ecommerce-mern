@@ -15,6 +15,7 @@ export default function Dashboard({ setActivePage }) {
   const [chartData, setChartData] = useState([]);
   const [orderStatusData, setOrderStatusData] = useState([]);
   const [topProductsData, setTopProductsData] = useState([]);
+  const [paymentMethodData, setPaymentMethodData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const STATUS_COLORS = {
@@ -55,6 +56,7 @@ export default function Dashboard({ setActivePage }) {
         let chartDataArr = [];
         let statusDataArr = [];
         let topProductsArr = [];
+        let paymentDataArr = [];
 
         if (prodData.success) {
           productsCount = prodData.data.products?.length || 0;
@@ -82,6 +84,7 @@ export default function Dashboard({ setActivePage }) {
 
           const statusMap = {};
           const productSalesMap = {};
+          const paymentMap = {};
           
           orders.forEach(o => {
              const dateVal = o.createdAt ? new Date(o.createdAt) : new Date();
@@ -101,6 +104,9 @@ export default function Dashboard({ setActivePage }) {
                  }
                });
              }
+
+             const paymentMethod = o.paymentMethod || 'Unknown';
+             paymentMap[paymentMethod] = (paymentMap[paymentMethod] || 0) + (Number(o.totalPrice) || 0);
           });
           chartDataArr = last7Days;
           
@@ -116,6 +122,11 @@ export default function Dashboard({ setActivePage }) {
             }))
             .sort((a, b) => b.quantity - a.quantity)
             .slice(0, 5);
+
+          paymentDataArr = Object.keys(paymentMap).map(key => ({
+            name: key,
+            value: paymentMap[key]
+          }));
         }
 
         if (userData.success) {
@@ -133,6 +144,7 @@ export default function Dashboard({ setActivePage }) {
         setChartData(chartDataArr);
         setOrderStatusData(statusDataArr);
         setTopProductsData(topProductsArr);
+        setPaymentMethodData(paymentDataArr);
 
       } catch (err) {
         console.error("Failed to load dashboard stats", err);
@@ -246,17 +258,17 @@ export default function Dashboard({ setActivePage }) {
              </div>
           </div>
           
-          <div className="dashboard-bottom-grid">
+          <div className="dashboard-charts-grid">
              <div className="chart-container">
                <h3>Top 5 Best-Selling Products</h3>
                <div className="chart-wrapper">
                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart layout="vertical" data={topProductsData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e7eb" />
-                      <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} />
-                      <YAxis type="category" dataKey="productName" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} width={120} tickFormatter={(value) => value.length > 18 ? value.substring(0, 18) + "..." : value} />
+                    <BarChart data={topProductsData} margin={{ top: 10, right: 30, left: 0, bottom: 25 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                      <XAxis dataKey="productName" stroke="#6b7280" fontSize={11} tickLine={false} tickFormatter={(value) => value.length > 15 ? value.substring(0, 15) + "..." : value} angle={-25} textAnchor="end" />
+                      <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
                       <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} cursor={{fill: '#f3f4f6'}} />
-                      <Bar dataKey="quantity" fill="#0071dc" radius={[0, 4, 4, 0]} barSize={24}>
+                      <Bar dataKey="quantity" fill="#0071dc" radius={[4, 4, 0, 0]} barSize={30}>
                          {topProductsData.map((entry, index) => (
                            <Cell key={`cell-${index}`} fill={['#0071dc', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'][index % 5]} />
                          ))}
@@ -265,7 +277,38 @@ export default function Dashboard({ setActivePage }) {
                  </ResponsiveContainer>
                </div>
              </div>
+             
+             <div className="chart-container">
+               <h3>Revenue by Payment Method</h3>
+               <div className="chart-wrapper">
+                 <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={paymentMethodData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {paymentMethodData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={['#10b981', '#f59e0b', '#3b82f6', '#8b5cf6'][index % 4]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                        itemStyle={{ color: '#111827', fontWeight: 500 }}
+                        formatter={(value) => `$${Number(value).toFixed(2)}`}
+                      />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                 </ResponsiveContainer>
+               </div>
+             </div>
+          </div>
 
+          <div className="dashboard-recent-orders-section">
              <div className="recent-orders-container">
                 <div className="recent-orders-header">
                    <h3>Recent Orders</h3>
