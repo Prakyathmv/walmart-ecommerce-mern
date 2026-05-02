@@ -185,7 +185,7 @@ function buildInvoice(order) {
       .fontSize(9)
       .fillColor('#777')
       .text(
-        'Thank you for shopping with Walmart Clone. This is a system-generated invoice.',
+        
         40,
         currentY,
         { align: 'center', width: 515 }
