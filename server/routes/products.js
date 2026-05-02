@@ -187,7 +187,10 @@ router.get('/:id', async (req, res) => {
           brand: product.brand,
           price: product.price,
           category: product.category,
-          imageUrl: product.imageUrl
+          department: product.department,
+          imageUrl: product.imageUrl,
+          stock: product.stock,
+          status: product.status
         },
       },
     });
@@ -276,7 +279,10 @@ router.put('/:id', protect, validateProduct, async (req, res) => {
           brand: product.brand,
           price: product.price,
           category: product.category,
-          imageUrl: product.imageUrl
+          department: product.department,
+          imageUrl: product.imageUrl,
+          stock: product.stock,
+          status: product.status
         },
       },
     });
