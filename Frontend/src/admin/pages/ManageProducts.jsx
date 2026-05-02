@@ -26,7 +26,7 @@ export default function ManageProducts() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/products`);
+      const response = await fetch(`${API_BASE}/api/products?limit=1000`);
       const data = await response.json();
       if (data.success) {
         setProducts(data.data.products);

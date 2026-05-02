@@ -9,18 +9,14 @@ function buildInvoice(order) {
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
 
-    /* =========================
-       COLORS & CONSTANTS
-    ========================= */
+    
     const primary = '#0071ce';
     const textColor = '#333';
     const lightGray = '#f5f6f7';
 
     let currentY = 40;
 
-    /* =========================
-       HEADER
-    ========================= */
+
     doc
       .fillColor(primary)
       .fontSize(26)
@@ -38,9 +34,6 @@ function buildInvoice(order) {
 
     doc.moveTo(40, currentY).lineTo(555, currentY).stroke('#ccc');
 
-    /* =========================
-       TITLE
-    ========================= */
     currentY += 15;
 
     doc
@@ -51,9 +44,7 @@ function buildInvoice(order) {
 
     currentY += 25;
 
-    /* =========================
-       LEFT: ORDER DETAILS
-    ========================= */
+    
     doc.fontSize(10).font('Helvetica');
 
     const leftX = 40;

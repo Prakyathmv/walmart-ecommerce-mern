@@ -35,7 +35,7 @@ export default function Dashboard({ setActivePage }) {
 
         
         const [prodRes, ordRes, userRes] = await Promise.all([
-          fetch(`${API_BASE}/api/products`), 
+          fetch(`${API_BASE}/api/products?limit=1000`), 
           fetch(`${API_BASE}/api/orders`, { headers }),
           fetch(`${API_BASE}/api/auth/users`, { headers }),
         ]);
@@ -356,7 +356,8 @@ export default function Dashboard({ setActivePage }) {
                </button>
             </div>
           </div>
-        </>
+        </> 
+       
       )}
     </div>
   );
