@@ -123,7 +123,7 @@ router.get('/', async (req, res) => {
     const skip = (pageNum - 1) * limitNum;
 
     const products = await Product.find(filter)
-      .sort(sort)
+      .sort(sort + ' _id')
       .skip(skip)
       .limit(limitNum)
       .lean();
