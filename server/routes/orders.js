@@ -177,10 +177,28 @@ router.get('/myorders', protect, async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const orders = await Order.find({}).sort({ createdAt: -1 });
+    const { page = 1, limit = 10 } = req.query;
+    
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = parseInt(limit) === 0 ? 0 : Math.min(10000, Math.max(1, parseInt(limit)));
+    const skip = (pageNum - 1) * limitNum;
+
+    const orders = await Order.find({})
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum);
+      
+    const total = await Order.countDocuments({});
+
     res.status(200).json({
       success: true,
-      data: { orders }
+      data: { orders },
+      meta: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        pages: limitNum > 0 ? Math.ceil(total / limitNum) : 1,
+      }
     });
   } catch (error) {
     res.status(500).json({ success: false, error: { message: 'Error fetching all orders' } });

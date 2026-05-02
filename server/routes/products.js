@@ -119,7 +119,7 @@ router.get('/', async (req, res) => {
     if (maxPrice) filter.price = { ...filter.price, $lte: parseFloat(maxPrice) };
 
     const pageNum = Math.max(1, parseInt(page));
-    const limitNum = Math.min(1000, Math.max(1, parseInt(limit)));
+    const limitNum = Math.min(10000, Math.max(1, parseInt(limit)));
     const skip = (pageNum - 1) * limitNum;
 
     const products = await Product.find(filter)

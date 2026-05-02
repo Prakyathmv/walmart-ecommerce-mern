@@ -19,17 +19,22 @@ export default function ManageProducts() {
   const [products, setProducts] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [page]);
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/products?limit=1000`);
+      const response = await fetch(`${API_BASE}/api/products?page=${page}&limit=10`);
       const data = await response.json();
       if (data.success) {
         setProducts(data.data.products);
+        if (data.meta) {
+          setTotalPages(data.meta.pages || 1);
+        }
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -230,6 +235,28 @@ export default function ManageProducts() {
           )}
         </tbody>
       </table>
+
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            onClick={() => setPage((p) => p - 1)}
+            disabled={page === 1}
+            className="pagination-btn"
+          >
+            &larr; Prev
+          </button>
+          <span className="pagination-info">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => p + 1)}
+            disabled={page === totalPages}
+            className="pagination-btn"
+          >
+            Next &rarr;
+          </button>
+        </div>
+      )}
     </div>
   );
 }

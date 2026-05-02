@@ -36,7 +36,7 @@ export default function Dashboard({ setActivePage }) {
         
         const [prodRes, ordRes, userRes] = await Promise.all([
           fetch(`${API_BASE}/api/products?limit=1000`), 
-          fetch(`${API_BASE}/api/orders`, { headers }),
+          fetch(`${API_BASE}/api/orders?limit=10000`, { headers }),
           fetch(`${API_BASE}/api/auth/users`, { headers }),
         ]);
 

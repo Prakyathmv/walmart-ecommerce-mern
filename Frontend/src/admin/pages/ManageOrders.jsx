@@ -8,18 +8,23 @@ export default function ManageOrders() {
   const [orders, setOrders] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [page]);
 
   const fetchOrders = async () => {
     try {
       
-      const response = await fetch(`${API_BASE}/api/orders`);
+      const response = await fetch(`${API_BASE}/api/orders?page=${page}&limit=10`);
       const data = await response.json();
       if (data.success) {
         setOrders(data.data.orders);
+        if (data.meta) {
+          setTotalPages(data.meta.pages || 1);
+        }
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -165,6 +170,28 @@ export default function ManageOrders() {
             )}
           </tbody>
         </table>
+      )}
+
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            onClick={() => setPage((p) => p - 1)}
+            disabled={page === 1}
+            className="pagination-btn"
+          >
+            &larr; Prev
+          </button>
+          <span className="pagination-info">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => p + 1)}
+            disabled={page === totalPages}
+            className="pagination-btn"
+          >
+            Next &rarr;
+          </button>
+        </div>
       )}
     </div>
   );
