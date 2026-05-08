@@ -28,8 +28,11 @@ const sendEmail = async (to, subject, html, attachments = []) => {
     from: "Walmart Clone <prakyathm411@gmail.com>",
     subject,
     html,
-    attachments: formattedAttachments,
   };
+
+  if (formattedAttachments && formattedAttachments.length > 0) {
+    msg.attachments = formattedAttachments;
+  }
 
   try {
     const data = await sgMail.send(msg);
