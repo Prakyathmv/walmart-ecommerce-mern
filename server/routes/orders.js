@@ -4,7 +4,7 @@ const { buildInvoice } = require('../utils/generatePdf');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const User = require('../models/User');
-const { Resend } = require('resend');
+const { sendEmail } = require('../utils/send-email');
 const { protect } = require('../middleware/auth');
 
 
@@ -64,67 +64,61 @@ router.post('/', protect, async (req, res) => {
 
     const savedOrder = await order.save();
 
-    // --- Send Order Confirmation Email with PDF Invoice via Resend ---
+    // --- Send Order Confirmation Email with PDF Invoice via SendGrid ---
     try {
-      if (!process.env.RESEND_API_KEY) {
-        console.warn('RESEND_API_KEY missing, skipping order confirmation email');
-      } else {
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        const user = await User.findById(userId).select('email name');
-        if (user && user.email) {
-          const itemsHtml = verifiedItems.map(item => `
-            <tr>
-              <td style="padding:8px;border-bottom:1px solid #eee;">${item.name}</td>
-              <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
-              <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">$${(item.price * item.quantity).toFixed(2)}</td>
-            </tr>`).join('');
+      const user = await User.findById(userId).select('email name');
+      if (user && user.email) {
+        const itemsHtml = verifiedItems.map(item => `
+          <tr>
+            <td style="padding:8px;border-bottom:1px solid #eee;">${item.name}</td>
+            <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
+            <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">$${(item.price * item.quantity).toFixed(2)}</td>
+          </tr>`).join('');
 
-          // Generate PDF invoice as a Buffer
-          const invoiceNo = `INV-2026-${savedOrder._id.toString().substring(0, 6).toUpperCase()}`;
-          const pdfBuffer = await buildInvoice(savedOrder);
+        // Generate PDF invoice as a Buffer
+        const invoiceNo = `INV-2026-${savedOrder._id.toString().substring(0, 6).toUpperCase()}`;
+        const pdfBuffer = await buildInvoice(savedOrder);
 
-          await resend.emails.send({
-            from: 'Walmart Clone <onboarding@resend.dev>',
-            to: user.email,
-            subject: `Order Confirmed! #${savedOrder._id.toString().slice(-6).toUpperCase()}`,
-            html: `
-            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-              <h2 style="color:#0071ce;">🛒 Order Confirmed!</h2>
-              <p>Hi <strong>${user.name || 'Valued Customer'}</strong>,</p>
-              <p>Thank you for your order. Here's a summary:</p>
+        await sendEmail(
+          user.email,
+          `Order Confirmed! #${savedOrder._id.toString().slice(-6).toUpperCase()}`,
+          `
+          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+            <h2 style="color:#0071ce;">🛒 Order Confirmed!</h2>
+            <p>Hi <strong>${user.name || 'Valued Customer'}</strong>,</p>
+            <p>Thank you for your order. Here's a summary:</p>
 
-              <table style="width:100%;border-collapse:collapse;margin:20px 0;">
-                <thead>
-                  <tr style="background:#f5f5f5;">
-                    <th style="padding:8px;text-align:left;">Product</th>
-                    <th style="padding:8px;text-align:center;">Qty</th>
-                    <th style="padding:8px;text-align:right;">Price</th>
-                  </tr>
-                </thead>
-                <tbody>${itemsHtml}</tbody>
-              </table>
+            <table style="width:100%;border-collapse:collapse;margin:20px 0;">
+              <thead>
+                <tr style="background:#f5f5f5;">
+                  <th style="padding:8px;text-align:left;">Product</th>
+                  <th style="padding:8px;text-align:center;">Qty</th>
+                  <th style="padding:8px;text-align:right;">Price</th>
+                </tr>
+              </thead>
+              <tbody>${itemsHtml}</tbody>
+            </table>
 
-              <p style="text-align:right;font-size:18px;">
-                <strong>Total: $${calculatedTotal.toFixed(2)}</strong>
-              </p>
+            <p style="text-align:right;font-size:18px;">
+              <strong>Total: $${calculatedTotal.toFixed(2)}</strong>
+            </p>
 
-              <hr style="border:none;border-top:1px solid #eee;margin:20px 0;"/>
-              <p style="color:#666;font-size:13px;">
-                <strong>Shipping to:</strong><br/>
-                ${shippingAddress.street || ''}, ${shippingAddress.city || ''}, ${shippingAddress.zip || ''}
-              </p>
-              <p style="color:#555;font-size:13px;">🧾 Your official receipt is attached to this email.</p>
-              <p style="color:#999;font-size:12px;">Order ID: ${savedOrder._id}</p>
-            </div>
-          `,
-            attachments: [
-              {
-                filename: `Walmart-Invoice-${invoiceNo}.pdf`,
-                content: pdfBuffer,
-              }
-            ]
-          });
-        }
+            <hr style="border:none;border-top:1px solid #eee;margin:20px 0;"/>
+            <p style="color:#666;font-size:13px;">
+              <strong>Shipping to:</strong><br/>
+              ${shippingAddress.street || ''}, ${shippingAddress.city || ''}, ${shippingAddress.zip || ''}
+            </p>
+            <p style="color:#555;font-size:13px;">🧾 Your official receipt is attached to this email.</p>
+            <p style="color:#999;font-size:12px;">Order ID: ${savedOrder._id}</p>
+          </div>
+        `,
+          [
+            {
+              filename: `Walmart-Invoice-${invoiceNo}.pdf`,
+              content: pdfBuffer,
+            }
+          ]
+        );
       }
     } catch (emailError) {
       console.warn('Order confirmation email failed (non-critical):', emailError.message);
@@ -256,7 +250,6 @@ router.get('/:id/invoice', protect, async (req, res) => {
     const pdfBuffer = await buildInvoice(order);
 
     // Send the PDF buffer as an email attachment
-    const { sendEmail } = require('../utils/send-email');
     const invoiceNo = `INV-2026-${order._id.toString().substring(0, 6).toUpperCase()}`;
     await sendEmail(
       user.email,
