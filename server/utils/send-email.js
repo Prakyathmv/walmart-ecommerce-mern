@@ -25,7 +25,7 @@ const sendEmail = async (to, subject, html, attachments = []) => {
 
   const msg = {
     to,
-    from: "Walmart Clone <prakyathm411@gmail.com>",
+    from:process.env.FROM_EMAIL,
     subject,
     html,
   };
