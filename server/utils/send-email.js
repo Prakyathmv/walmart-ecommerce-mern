@@ -1,48 +1,44 @@
-const sgMail = require('@sendgrid/mail');
+const { Resend } = require('resend');
 
 const sendEmail = async (to, subject, html, attachments = []) => {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.error("Missing SENDGRID_API_KEY in environment");
+  if (!process.env.RESEND_API_KEY) {
+    console.error("Missing RESEND_API_KEY in environment");
     throw new Error("Email configuration error");
   }
 
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
-  // Map attachments from Resend format (Buffer content) to SendGrid format (Base64 content)
+  // Format attachments for Resend
   const formattedAttachments = attachments.map(att => {
-    let type = 'application/pdf'; 
-    if (att.filename && (att.filename.endsWith('.jpg') || att.filename.endsWith('.jpeg'))) {
-      type = 'image/jpeg';
-    }
-
     return {
       content: Buffer.isBuffer(att.content) ? att.content.toString('base64') : att.content,
       filename: att.filename,
-      type: type,
-      disposition: 'attachment'
     };
   });
 
-  const msg = {
-    to,
-    from:process.env.FROM_EMAIL,
-    subject,
-    html,
+  const payload = {
+    from: process.env.FROM_EMAIL || 'onboarding@resend.dev',
+    to: Array.isArray(to) ? to : [to],
+    subject: subject,
+    html: html,
   };
 
   if (formattedAttachments && formattedAttachments.length > 0) {
-    msg.attachments = formattedAttachments;
+    payload.attachments = formattedAttachments;
   }
 
   try {
-    const data = await sgMail.send(msg);
-    console.log("Email sent successfully with SendGrid");
+    const { data, error } = await resend.emails.send(payload);
+
+    if (error) {
+      console.error("Resend API Error:", error);
+      throw new Error(error.message || "Failed to send email");
+    }
+
+    console.log("Email sent successfully with Resend:", data.id);
     return data;
   } catch (error) {
-    console.error("Error sending email with SendGrid:", error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
+    console.error("Error sending email with Resend:", error);
     throw new Error("Failed to send email");
   }
 };

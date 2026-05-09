@@ -154,14 +154,14 @@ function buildInvoice(order) {
 
     currentY += 10;
 
-    const subtotal = order.totalPrice;
-    const tax = subtotal * 0.0825;
-    const total = subtotal + tax;
+    const subtotal = order.subtotal || order.totalPrice;
+    const tax = order.gstAmount || 0;
+    const total = order.totalPrice;
 
     summaryRow(doc, currentY, 'Subtotal:', subtotal);
     currentY += 15;
 
-    summaryRow(doc, currentY, 'Sales Tax (8.25%):', tax);
+    summaryRow(doc, currentY, 'GST (18%):', tax);
     currentY += 15;
 
     summaryRow(doc, currentY, 'Shipping:', 0);

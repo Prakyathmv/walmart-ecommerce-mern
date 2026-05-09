@@ -75,12 +75,16 @@ const Cart = () => {
                         <span>${cartTotalAmount.toFixed(2)}</span>
                     </div>
                     <div className="summary-row">
+                        <span>Estimated GST (18%):</span>
+                        <span>${(cartTotalAmount * 0.18).toFixed(2)}</span>
+                    </div>
+                    <div className="summary-row">
                         <span>Shipping:</span>
                         <span>Calculated at checkout</span>
                     </div>
                     <div className="summary-row total">
                         <span>Estimated Total:</span>
-                        <span>${cartTotalAmount.toFixed(2)}</span>
+                        <span>${(cartTotalAmount * 1.18).toFixed(2)}</span>
                     </div>
                     
                     <button 

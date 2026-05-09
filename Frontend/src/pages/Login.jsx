@@ -12,7 +12,16 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isOtpStep, setIsOtpStep] = useState(false);
   const [otp, setOtp] = useState('');
+  const [resendTimer, setResendTimer] = useState(0);
+  const timerRef = React.useRef(null);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (resendTimer > 0) {
+      timerRef.current = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+    }
+    return () => clearTimeout(timerRef.current);
+  }, [resendTimer]);
 
   const handleSendOtp = async () => {
     if (!email) {
@@ -25,8 +34,24 @@ const Login = () => {
       await axios.post('/api/auth/send-otp', { email });
       setIsOtpStep(true);
       setError('');
+      setResendTimer(60);
     } catch (err) {
       setError(err.response?.data?.error?.message || 'Failed to send OTP. Ensure you are registered.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendTimer > 0) return;
+    setLoading(true);
+    setError('');
+    try {
+      await axios.post('/api/auth/send-otp', { email });
+      setError('');
+      setResendTimer(60);
+    } catch (err) {
+      setError(err.response?.data?.error?.message || 'Failed to resend OTP.');
     } finally {
       setLoading(false);
     }
@@ -169,6 +194,21 @@ const Login = () => {
               {loading ? 'Verifying...' : 'Verify OTP'}
             </button>
             <div style={{ textAlign: 'center', marginTop: '15px' }}>
+              <button 
+                type="button" 
+                onClick={handleResendOtp}
+                disabled={loading || resendTimer > 0}
+                style={{ 
+                  background: 'none', border: 'none', color: resendTimer > 0 ? '#999' : '#1a5bd7', 
+                  textDecoration: resendTimer > 0 ? 'none' : 'underline', width: 'auto', 
+                  padding: 0, fontWeight: 'normal', fontSize: '14px', marginBottom: '10px',
+                  cursor: resendTimer > 0 ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
+              </button>
+            </div>
+            <div style={{ textAlign: 'center', marginTop: '5px' }}>
               <button 
                 type="button" 
                 onClick={() => setIsOtpStep(false)}

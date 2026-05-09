@@ -54,12 +54,18 @@ router.post('/', protect, async (req, res) => {
 
     }
 
+    const subtotal = calculatedTotal;
+    const gstAmount = subtotal * 0.18;
+    const finalTotal = subtotal + gstAmount;
+
     const order = new Order({
       userId: userId || null,
       items: verifiedItems,
       shippingAddress,
       paymentMethod,
-      totalPrice: calculatedTotal
+      subtotal: subtotal,
+      gstAmount: gstAmount,
+      totalPrice: finalTotal
     });
 
     const savedOrder = await order.save();
@@ -99,8 +105,12 @@ router.post('/', protect, async (req, res) => {
               <tbody>${itemsHtml}</tbody>
             </table>
 
-            <p style="text-align:right;font-size:18px;">
-              <strong>Total: $${calculatedTotal.toFixed(2)}</strong>
+            <p style="text-align:right;font-size:16px;">
+              <strong>Subtotal: $${subtotal.toFixed(2)}</strong><br/>
+              <strong>GST (18%): $${gstAmount.toFixed(2)}</strong><br/>
+            </p>
+            <p style="text-align:right;font-size:18px;color:#0071ce;">
+              <strong>Total: $${finalTotal.toFixed(2)}</strong>
             </p>
 
             <hr style="border:none;border-top:1px solid #eee;margin:20px 0;"/>

@@ -32,6 +32,14 @@ const orderSchema = new mongoose.Schema(
       
     },
     items: [orderItemSchema],
+    subtotal: {
+      type: Number,
+      required: true
+    },
+    gstAmount: {
+      type: Number,
+      required: true
+    },
     totalPrice: {
       type: Number,
       required: true

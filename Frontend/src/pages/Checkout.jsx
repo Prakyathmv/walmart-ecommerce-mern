@@ -216,12 +216,16 @@ const Checkout = () => {
                             <span>${cartTotalAmount.toFixed(2)}</span>
                         </div>
                         <div className="total-row">
+                            <span>GST (18%)</span>
+                            <span>${(cartTotalAmount * 0.18).toFixed(2)}</span>
+                        </div>
+                        <div className="total-row">
                             <span>Shipping</span>
                             <span>$0.00 (Free)</span>
                         </div>
                         <div className="total-row grand-total">
                             <span>Total to Pay</span>
-                            <span>${cartTotalAmount.toFixed(2)}</span>
+                            <span>${(cartTotalAmount * 1.18).toFixed(2)}</span>
                         </div>
                     </div>
                 </div>
