@@ -258,6 +258,9 @@ router.post(
       const subject = 'Your Login Verification Code';
       const html = `<h2>Walmart Clone Verification</h2><p>Your one-time password is: <strong>${otpCode}</strong></p><p>This code will expire in 5 minutes.</p>`;
 
+      // Log OTP to file for testing
+      require('fs').writeFileSync('d:\\MCA\\internship\\Workspace\\otp-log.txt', otpCode);
+
       await sendEmail(email, subject, html);
 
       res.status(200).json({ success: true, data: { message: 'OTP sent successfully' } });
